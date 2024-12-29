@@ -1,0 +1,255 @@
+<div class="card">
+  <div class="card-body">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h4 class="card-title mb-4" style="margin: 0;">Token Registration</h4>
+      <!-- <button type="button" [routerLink]="['/patient/list']" routerLinkActive="router-link-active"
+        class="btn btn-primary"
+        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Token List</button> -->
+    </div>
+    <div class="form-container">
+      <!-- <h2>Add Manual Token</h2> -->
+      <form [formGroup]="tokenForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Clinic Selection -->
+          <div class="col-md-3" *ngIf="checkrole === 'superadmin'">
+            <div class="mb-3">
+              <label for="clinicid">Clinics <span style="color: red;">*</span></label>
+              <select formControlName="clinic_id" id="clinic_id" class="form-select"
+                (change)="getptn($event.target.value)" required>
+                <option value="">Select</option>
+                <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">
+                  {{ clinic.clinicname }}
+                </option>
+              </select>
+              <div *ngIf="message">
+                <span [style.color]="color">{{ message }}</span>
+              </div>
+
+
+              <div *ngIf="submitted && f.clinic_id.errors" class="text-danger">
+                Clinic is required.
+              </div>
+            </div>
+          </div>
+          <div *ngIf="checkrole !== 'superadmin'">
+            <input type="hidden" formControlName="clinic_id" id="clinic_id">
+          </div>
+
+
+
+          <!-- Registration Check -->
+          <div class="col-md-3">
+            <div class="mb-3">
+              <label>Are you registered at this clinic?</label>
+              <div class="form-check form-switch">
+                <input class="form-check-input" formControlName="token_registered" type="checkbox" id="token_registered"
+                  [checked]="checkstatus === 'Yes'" (change)="togglecheckreg($event)" />
+                <label class="form-check-label" for="token_registered">
+                  {{ checkstatus === 'Yes' ? 'Yes' : 'No' }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergency Checkbox -->
+          <div class="col-md-1">
+            <div class="mb-1">
+              <label style="color: red;">Emergency</label><br>
+              <input type="checkbox" id="emergency" formControlName="emergency">
+            </div>
+          </div>
+
+          <!-- SMS Checkbox -->
+          <div class="col-md-1">
+            <div class="mb-1">
+              <label style="color: green;">SMS</label><br>
+              <input type="checkbox" id="sms">
+            </div>
+          </div>
+
+          <!-- Conditional MPI Number -->
+          <div class="col-md-2" *ngIf="checkstatus === 'Yes'">
+            <div class="mb-2">
+              <label for="mpino">MPI No. <span style="color: red;">*</span></label>
+              <select formControlName="patient_id" id="mpino" class="form-select">
+                <option selected>Select Mpi</option>
+                <option *ngFor="let patient of mpinoList" [value]="patient.patientregid">
+                  {{ patient.mpino }}
+                </option>
+              </select>
+              <div *ngIf="submitted && f.patient_id.errors" class="text-danger">
+                Mpi is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Conditional ID Number -->
+          <div class="col-md-2" *ngIf="checkstatus === 'No'">
+            <div class="mb-2">
+              <label for="idnumber">ID Number <span style="color: red;">*</span></label>
+              <input type="text" formControlName="token_idnumber" id="idnumber" class="form-control">
+              <div *ngIf="submitted && f.token_idnumber.errors" class="text-danger">
+                ID Number is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Conditional Date of Birth -->
+          <div class="col-md-2" *ngIf="checkstatus === 'No'">
+            <div class="mb-2">
+              <label for="dob">Date Of Birth</label>
+              <input type="date" formControlName="token_pdob" id="dob" class="form-control">
+            </div>
+          </div>
+
+          <!-- Stream Selection -->
+          <div class="col-md-2">
+            <div class="mb-2">
+              <label for="streams">Streams <span style="color: red;">*</span></label>
+              <select id="streams" formControlName="tokenstream" required class="form-select">
+                <option value="">Select</option>
+                <option *ngFor="let clsf of classificationList" [value]="clsf.id">
+                  {{ clsf.classification }}
+                </option>
+              </select>
+              <div *ngIf="submitted && f.tokenstream.errors" class="text-danger">
+                Stream is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Reason Selection -->
+          <div class="col-md-2">
+            <div class="mb-2">
+              <label for="reason">Reason <span style="color: red;">*</span></label>
+              <select id="reason" required class="form-select" formControlName="token_reason">
+                <option selected>Select</option>
+                <option value="Follow-Up Visit">Follow-Up Visit</option>
+                <option value="Medication Collection">Medication Collection</option>
+                <option value="Routine Visit">Routine Visit</option>
+              </select>
+              <div *ngIf="submitted && f.token_reason.errors" class="text-danger">
+                Reason is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="col-md-4 d-flex align-items-end">
+            <button type="reset" class="btn btn-dark me-2">Reset</button>
+            <button type="button" (click)="onSubmit()" class="btn btn-primary">
+              Create Token
+            </button>
+
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title mb-4" style="margin: 0;">Token List</h4>
+    <div class="row">
+      <!-- Search Bar (Right Side) -->
+      <div class="search-container">
+        <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="" autocomplete="off"
+          class="search-bar" />
+      </div>
+
+      <!-- Table -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Token No</th>
+            <th>Clinic Name</th>
+            <th>Patient</th>
+            <th>Mpi No</th>
+            <th>Streams</th>
+            <th>Status</th>
+            <th>Added By</th>
+            <th>Add Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Show loading message when data is being fetched or if tokenData is empty -->
+          <tr *ngIf="isLoading">
+            <td colspan="7" class="text-center">
+              <div class="d-flex justify-content-center align-items-center">
+                <div class="spinner-border text-primary me-2" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <span class="text-muted">Loading data, please wait...</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Show actual data when available -->
+          <tr *ngFor="let tokens of tokenData; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>
+              <span class="badge bg-dark">{{ tokens.tokenno }}</span>
+            </td>
+            <td>{{ tokens.clinicname }}</td>
+            <td>
+              <span *ngIf="tokens.token_registered == 'true'">{{ tokens.fullname }}</span>
+              <span *ngIf="tokens.token_registered !== 'true'" class="badge bg-danger">Unregistered</span>
+            </td>
+            <td>
+              <span *ngIf="tokens.token_registered == 'true'">{{ tokens.mpino }}</span>
+              <span *ngIf="tokens.token_registered !== 'true'" class="badge bg-danger">Unregistered</span>
+            </td>
+            <td>
+              {{ tokens.classification }}
+            </td>
+            <td>
+              <span class="badge rounded-pill" [ngClass]="{
+                'bg-primary': tokens.tokenstatus === 'Current',
+                'bg-warning': tokens.tokenstatus === 'Waiting',
+                'bg-success': tokens.tokenstatus === 'Completed'
+              }">
+                {{ tokens.tokenstatus }}
+              </span>
+            </td>
+
+            <td>
+              {{ tokens.added_by }}
+            </td>
+            <td>
+              {{ tokens.adddate | date:'dd-MM-yyyy' }}
+            </td>
+            <td>
+              <button class="btn btn-sm" style="background: rgb(181, 126, 220);color:#fff;" title="call token"
+                (click)="callToken(tokens.tokenno)">
+                <i class="fas fa-bullhorn"></i>
+              </button>&nbsp;
+              <button class="btn btn-sm btn-dark" title="Print Token" (click)="printToken(tokens.id)">
+                <i class="fas fa-print"></i>
+              </button>&nbsp;
+              <button *ngIf="tokens.tokenstatus == 'Current'" class="btn btn-sm btn-success" title="Completed Token"
+                (click)="CompletedToken(tokens.id)">
+                <i class="fas fa-stop"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+
+        <span *ngFor="let page of pageNumbers" [class.active]="currentPage === page" (click)="goToPage(page)"
+          class="page-number">{{ page }}</span>
+
+        <button class="page-btn" (click)="goToPage(currentPage + 1)"
+          [disabled]="currentPage === totalPages">Next</button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,225 @@
+<div class="card">
+  <div class="card-body">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h4 class="card-title mb-4" style="margin: 0;">Clinic Schedule</h4>
+    </div>
+
+    <form [formGroup]="scheduleForm" (ngSubmit)="onSave()">
+      <div class="row align-items-end">
+        <div class="col-md-3 col-sm-6">
+
+          <!-- Admin select clinic -->
+          <div class="mb-3"  *ngIf="checkrole == 'superadmin'">
+            <label for="clinicName" style="font-weight: bold; color: #333;">Select Clinic<span class="text-danger">*</span></label>
+            <select formControlName="clinicid" id="clinicid" class="form-control" style="border-radius: 8px; padding: 10px;">
+              <option disabled selected>Select Clinic</option>
+              <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">{{ clinic.clinicname }}</option>
+            </select>
+            <div *ngIf="submitted && f.clinicid.errors" class="text-danger" style="min-height: 1.5em;">
+              Clinic is required.
+            </div>
+          </div>
+
+
+           <!-- staff  clinic -->
+          <div class="mb-3"  *ngIf="checkrole !== 'superadmin'">
+            <input type="hidden" formControlName="clinicid" id="clinicid" readonly>
+
+            <label for="clinicName" style="font-weight: bold; color: #333;">Clinic<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" value={{sessionclinicname}} readonly>
+            <div *ngIf="submitted && f.clinicid.errors" class="text-danger" style="min-height: 1.5em;">
+              Clinic is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="mb-3">
+            <label for="month" style="font-weight: bold; color: #333;">Month<span class="text-danger">*</span></label>
+            <input type="month" class="form-control" id="month" formControlName="month"  [min]="minMonth">
+            <div *ngIf="submitted && f.month.errors" class="text-danger" style="min-height: 1.5em;">
+              Month is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="mb-3">
+            <label for="noofappointment" style="font-weight: bold; color: #333;">Appointments Slots<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" autocomplete="off" formControlName="apsolts" id="apsolts" maxlength="5" 
+              onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+            <div *ngIf="submitted && f.apsolts.errors" class="text-danger" style="min-height: 1.5em;">
+              Slot is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6" style="margin-top:5px">
+          <div class="mb-3">
+          <button type="submit" class="btn btn-primary mt-4">Submit</button>
+        </div>
+        </div>
+      </div>
+    </form>
+
+
+<hr>
+    <div class="row">
+      <div class="col-12">
+          <div class="card">
+              <div class="card-body">
+                 
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                     
+                    
+                  </div>
+
+               
+
+                  
+                  
+
+                  <div class="row mb-md-2">
+                      <div class="col-sm-12 col-md-6">
+                          <div class="dataTables_length" id="role-table_length">
+                              <label class="d-inline-flex align-items-center">Show
+                                  <select name="pageSize" aria-controls="role-table" [(ngModel)]="pageSize"
+                                      class="form-control form-control-sm mx-2">
+                                      <option [ngValue]="10">10</option>
+                                      <option [ngValue]="25">25</option>
+                                      <option [ngValue]="50">50</option>
+                                      <option [ngValue]="100">100</option>
+                                  </select> entries
+                              </label>
+                          </div>
+                      </div>
+                      <div class="col-sm-12 col-md-6">
+                          <div id="role-table_filter" class="dataTables_filter text-md-end">
+                              <label class="d-inline-flex align-items-center">Search:
+                                  <input type="text" class="form-control form-control-sm ms-2"
+                                      [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Table -->
+                  <div class="table-responsive">
+                      <table id="role-datatable" class="table table-bordered dt-responsive nowrap">
+                          <thead>
+                              <tr>
+                                  <th>Sr No</th>
+                                  <th (click)="onSort('clinicname')">
+                                      Clinic  Name                                        
+                                      <span *ngIf="sortColumn === 'clinicname'">
+                                           <i class="fa"
+                                               [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                       </span>
+                                   </th>
+                                   <th (click)="onSort('month')">
+                                   Month                                     
+                                    <span *ngIf="sortColumn === 'month'">
+                                         <i class="fa"
+                                             [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                     </span>
+                                   </th>
+                                   <th (click)="onSort('month')">
+                                    Schedule Duration                                     
+                                     <span *ngIf="sortColumn === 'month'">
+                                          <i class="fa"
+                                              [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                      </span>
+                                    </th>
+                                  <th (click)="onSort('Date')">
+                                     Created Date                                       
+                                     <span *ngIf="sortColumn === 'Date'">
+                                          <i class="fa"
+                                              [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                      </span>
+                                  </th>
+                                  <th *ngIf="role === 'superadmin'">Added By</th>
+                                 
+                                
+                                  <th>Actions</th>
+                              </tr>
+                          </thead>
+                          <tbody *ngFor="let schedule of filteredSchedule$ | async; let i = index">
+                              <tr>
+                                  <td>{{i+1}}</td>
+                                  <td>{{ schedule.clinicname }}</td>
+                                  <td>{{ schedule.month }}</td>
+                                  <td>{{ schedule.from_to_date }}</td>
+                                  <td>{{ schedule.clinic_sch_dt }}</td>
+                                  <th *ngIf="role === 'superadmin'">
+                                    {{ schedule.fname && schedule.lname ? schedule.fname + ' ' + schedule.lname : 'SuperAdmin' }}
+                                  </th>
+                                  
+                                  
+                                  
+                                  
+                                  <td>
+                                      <div>
+                                          
+                                         <!-- Edit button -->
+                                          <!-- <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                              data-bs-target="#editClinicModal" 
+                                              style="background-color: #2196F3; border-color: #2196F3; color: white;">
+                                              Edit
+                                          </button> -->
+
+                                          <button [routerLink]="['/edit/schedule',schedule.clinicid,schedule.csid]" title="Edit Schedule "
+                                            style="background: none; border: none; cursor: pointer; color: #007bff; font-size: 16px;">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                      </div>
+                                  </td>
+                              </tr>
+
+                          </tbody>
+                      </table>
+                  </div>
+
+                  <!-- Pagination -->
+                  <div class="pagination-controls" style="text-align: right; margin-top: 10px;">
+                      <!-- <span>Total Roles: {{ totalRoles }}</span> -->
+                      <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                          Previous
+                      </button>
+
+                      <button (click)="onPageChange(page + 1)" [disabled] class="pagination-button">
+                          Next
+                      </button>
+                  </div>
+
+                  <style>
+                      .pagination-button {
+                          padding: 5px 10px;
+                          font-size: 12px;
+                          background-color: #f1f1f1;
+                          color: #333;
+                          border: 1px solid #ddd;
+                          border-radius: 3px;
+                          cursor: pointer;
+                          margin-right: 5px;
+                          transition: border-color 0.3s, background-color 0.3s;
+                      }
+
+                      .pagination-button:hover {
+                          border-color: #007bff;
+                          background-color: #f9f9f9;
+                      }
+
+                      .pagination-button:disabled {
+                          cursor: not-allowed;
+                          opacity: 0.6;
+                      }
+                  </style>
+
+
+
+              </div>
+          </div>
+
+      </div>
+
+  </div>
+  </div>
+</div>
+

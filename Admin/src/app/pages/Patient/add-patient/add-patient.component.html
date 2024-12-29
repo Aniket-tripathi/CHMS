@@ -1,0 +1,806 @@
+<div class="card">
+  <div class="card-body">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h4 class="card-title mb-4" style="margin: 0;">Patient Registration</h4>
+      <button type="button" [routerLink]="['/patient/list']" routerLinkActive="router-link-active"
+        class="btn btn-primary"
+        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Patient List</button>
+    </div>
+    <!-- <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div> -->
+
+
+    <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-2" *ngIf="checkrole === 'superadmin'">
+          <div class="mb-2">
+            <label>Clinic Name<span style="color: red;">*</span></label>
+            <select formControlName="clinicid" id="clinicid" class="form-select" (change)="getmpi($event.target.value)">
+              <option value="">Select Clinic</option>
+              <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">
+                {{ clinic.clinicname }}
+              </option>
+            </select>
+            <div *ngIf="submitted && f.clinicid.errors" class="text-danger">
+              Clinic is required.
+            </div>
+          </div>
+        </div>
+        <div *ngIf="checkrole !== 'superadmin'">
+          <input type="hidden" formControlName="clinicid" id="clinicid" [(ngModel)]="cid" class="form-control">
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="patient_category">Patient Category<span style="color: red;">*</span></label>
+            <select formControlName="patient_category" id="patient_category" class="form-select">
+              <option value="" selected>Select Patient Category</option>
+              <option value="Adult">Adult</option>
+              <option value="Child">Child</option>
+              <option value="Infant">Infant</option>
+            </select>
+            <div *ngIf="submitted && f.patient_category.errors" class="text-danger">
+              Patient Category is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="mpino">Mpi No<span style="color: red;">*</span></label>
+            <input type="text" class="form-control" id="mpino" [value]="mpiNo" formControlName="mpino" readonly />
+
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="fileno">File No<span style="color: red;">*</span></label>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="ccode">0</span>
+              </div>
+              <input type="text" class="form-control" autocomplete="off"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57" formControlName="fileno" id="fileno"
+                maxlength="5" required="">
+              <div *ngIf="submitted && f.fileno.errors" class="text-danger">
+                File No is required.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="classification">Classification</label>
+            <select id="patientclassification" formControlName="patientclassification" class="form-select">
+              <option value="" selected>Select Classification</option>
+              <option *ngFor="let classification of classifications" [value]="classification.id">
+                {{ classification.classification }}
+              </option>
+            </select>
+
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="title">Title<span style="color: red;">*</span></label>
+            <select id="title" formControlName="title" class="form-select">
+              <option value="" selected>Select Title</option>
+              <option value="Mr">Mr</option>
+              <option value="Ms">Ms</option>
+              <option value="Mrs">Mrs</option>
+              <option value="Dr">Dr</option>
+              <option value="Prof">Prof</option>
+            </select>
+            <div *ngIf="submitted && f.title.errors" class="text-danger">
+              Title is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="fname">First Name<span style="color: red;">*</span></label>
+            <input type="text" formControlName="firstname" id="firstname" class="form-control">
+            <div *ngIf="submitted && f.firstname.errors" class="text-danger">
+              Firstname is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="lname">Last Name<span style="color: red;">*</span></label>
+            <input type="text" formControlName="lastname" id="lastname" class="form-control">
+            <div *ngIf="submitted && f.lastname.errors" class="text-danger">
+              Lastname is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="nationality">Nationality<span style="color: red;">*</span></label><br>
+            <input type="radio" formControlName="nationality" class="form-check-input" id="south-african"
+              value="south-african" (change)="checknationality($event)">South African
+            <input type="radio" formControlName="nationality" class="form-check-input" id="non-south-african"
+              value="Non-South African" (change)="checknationality($event)">Non-South African
+            <input type="radio" formControlName="nationality" class="form-check-input" id="non-documented"
+              value="Non-Documented" (change)="checknationality($event)">Non-Documented
+            <div *ngIf="submitted && f.nationality.errors" class="text-danger">
+              Nationality is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2" id="idnumberdiv" *ngIf="showIdNumberDiv">
+          <div class="mb-2">
+            <label for="idnumber">ID Number</label>
+            <input type="text" minlength="13" maxlength="13"
+              onkeypress="return event.charCode >= 48 && event.charCode <= 57" formControlName="idnumber" id="idnumber"
+              class="form-control" (change)="getDob($event)">
+            <div id="iderror" *ngIf="iderror" style="color: red;">
+              {{ iderror }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="dob">Date Of Birth<span style="color: red;">*</span></label>
+            <input type="date" formControlName="dob" id="dob" class="form-control" (change)="getAge($event)"
+              [value]="dob">
+
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="mb-1">
+            <label for="age">Age<span style="color: red;">*</span></label>
+            <input type="text" formControlName="age" id="age" class="form-control" [value]="age" readonly>
+            <input type="hidden" id="agep" formControlName="agep" [value]="age">
+          </div>
+        </div>
+        <div class="col-md-2" id="passportnumberdiv" *ngIf="showpassportNumberDiv">
+          <div class="mb-2">
+            <label for="passport">Passport Number</label>
+            <input type="text" formControlName="passportno" id="passportno" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="gender">Gender<span style="color: red;">*</span></label><br>
+            <input type="radio" class="form-check-input" formControlName="gender" id="male" value="Male"
+              [(ngModel)]="gender">Male
+            <input type="radio" class="form-check-input" formControlName="gender" id="female" value="Female"
+              [(ngModel)]="gender">Female
+            <input type="radio" class="form-check-input" formControlName="gender" id="nonbinary" value="Nonbinary"
+              [(ngModel)]="gender">Nonbinary
+            <div *ngIf="submitted && f.gender.errors" class="text-danger">
+              Gender is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2" id="expdtdiv" *ngIf="showexpdtDiv">
+          <div class="mb-2">
+            <label for="expiry_date">Expiry Date</label>
+            <input type="date" formControlName="expdt" id="expdt" class="form-control">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="religion">Religion</label>
+            <select id="religion" formControlName="religion" class="form-select">
+              <option value="" selected>Select Religion</option>
+              <option value="Hindu">Hindu</option>
+              <option value="Muslim">Muslim</option>
+              <option value="Christian">Christian</option>
+              <option value="Buddhist">Buddhist</option>
+              <option value="Sikh">Sikh</option>
+              <option value="Jewish">Jewish</option>
+              <option value="Atheist">Atheist</option>
+              <option value="Other">Other</option>
+            </select>
+
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="marrital_status">Marital Status</label>
+            <select id="marrital_status" formControlName="maritalstatus" class="form-select">
+              <option value="">Select</option>
+              <option value="Cohibiting">Cohibiting</option>
+              <option value="Divorced">Divorced</option>
+              <option value="Married">Married</option>
+              <option value="Separated">Separated</option>
+              <option value="Single">Single</option>
+              <option value="Unknown">Unknown</option>
+              <option value="Widow">Widow</option>
+              <option value="Widower">Widower</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="citizenship">Citizenship<span style="color: red;">*</span></label>
+            <select id="citizenship" formControlName="citizenship" class="form-select">
+              <option value="">Select</option>
+              <option value="Angola">Angola</option>
+              <option value="Botswana">Botswana</option>
+              <option value="Comoros">Comoros</option>
+              <option value="Democratic Republic of Congo">Democratic Republic of Congo (DRC)</option>
+              <option value="Lesotho">Lesotho</option>
+              <option value="Madagascar">Madagascar</option>
+              <option value="Malawi">Malawi</option>
+              <option value="Mauritius">Mauritius</option>
+              <option value="Mozambique">Mozambique</option>
+              <option value="Namibia">Namibia</option>
+              <option value="Seychelles">Seychelles</option>
+              <option value="South Africa" selected>South Africa</option>
+              <option value="Swaziland">Swaziland</option>
+              <option value="United Republic of Tanzania">United Republic of Tanzania</option>
+              <option value="Zambia">Zambia</option>
+              <option value="Zimbabwe">Zimbabwe</option>
+              <option value="Other">Other</option>
+            </select>
+            <div *ngIf="submitted && f.citizenship.errors" class="text-danger">
+              Citizenship is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="language">Language<span style="color: red;">*</span></label>
+            <select id="language" formControlName="language" class="form-select">
+              <option value="">Select</option>
+              <option value="Afrikaans">Afrikaans</option>
+              <option value="English">English</option>
+              <option value="Isindebele">Isindebele</option>
+              <option value="Other">Other</option>
+              <option value="Sepedi">Sepedi</option>
+              <option value="Sesotho">Sesotho</option>
+              <option value="Setswana">Setswana</option>
+              <option value="Siswati">Siswati</option>
+              <option value="Tshivenda">Tshivenda</option>
+              <option value="Unknown">Unknown</option>
+              <option value="Isixhosa">Isixhosa</option>
+              <option value="Xitsonga">Xitsonga</option>
+              <option value="Isizulu">Isizulu</option>
+            </select>
+            <div *ngIf="submitted && f.language.errors" class="text-danger">
+              Language is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="race">Race<span style="color: red;">*</span></label>
+            <select id="race" formControlName="race" class="form-select">
+              <option value="">Select</option>
+              <option value="Black">Black</option>
+              <option value="White">White</option>
+              <option value="Coloured">Coloured</option>
+              <option value="Indian">Indian</option>
+              <option value="Other">Other</option>
+            </select>
+            <div *ngIf="submitted && f.race.errors" class="text-danger">
+              Race is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="mobile_num">Mobile Number</label>
+            <input type="text" formControlName="patientpno"
+              onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" id="patientpno"
+              class="form-control">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="email">Email</label>
+            <input type="email" formControlName="patientemail" id="patientemail" class="form-control" placeholder="@">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="alter_num">Alternative Number</label>
+            <input type="text" formControlName="patientextra"
+              onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" id="patientextra"
+              class="form-control">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="mb-2">
+            <label for="medical_fund">Medical Fund</label><br>
+            <input type="radio" class="form-check-input" (change)="checkmedfund($event)" id="Yes"
+              [(ngModel)]="medicalfund" formControlName="medicalfund" value="Yes">Yes
+            <input type="radio" class="form-check-input" (change)="checkmedfund($event)" id="No"
+              [(ngModel)]="medicalfund" formControlName="medicalfund" value="No">No
+
+          </div>
+        </div>
+        <div class="col-md-2" id="medfunddiv1" *ngIf="medfundDiv1">
+          <div class="mb-2">
+            <label for="med_fund_name">Medical Fund Name</label>
+            <select id="medicalfundname" formControlName="medicalfundname" class="form-select">
+              <option value="">Select Funder Name</option>
+              <option value="GEMS">GEMS</option>
+              <option value="BONITAS">BONITAS</option>
+              <option value="MOMENTUM">MOMENTUM</option>
+              <option value="DISCOVERY">DISCOVERY</option>
+              <option value="BESTMED">BESTMED</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-2" id="medfunddiv2" *ngIf="medfundDiv2">
+          <div class="mb-2">
+            <label for="fund_number">Medical Fund Number</label>
+            <input type="text" formControlName="medicalfundno" id="medicalfundno" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Card for Patient Address -->
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <strong>Patient Address</strong>
+          </div>
+          <div class="card-body">
+            <form>
+              <!-- Row 1: 4 Fields -->
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <label for="address" class="form-label">Address</label>
+                  <input type="text" class="form-control" formControlName="bill_address" id="bill_address"
+                    placeholder="ADDRESS">
+
+                </div>
+                <div class="col-md-3">
+                  <label for="suburbRegion" class="form-label">Suburb Region</label>
+                  <input type="text" class="form-control" formControlName="bill_suburd" id="bill_suburd"
+                    placeholder="SUBURB">
+
+                </div>
+                <div class="col-md-3">
+                  <label for="city" class="form-label">City </label>
+                  <input type="text" class="form-control" formControlName="bill_city" id="bill_city" placeholder="CITY">
+
+                </div>
+                <div class="col-md-3">
+                  <label for="areaCode" class="form-label">Area Code</label>
+                  <input type="text" class="form-control" formControlName="bill_areacode" id="bill_areacode"
+                    placeholder="AREA CODE">
+
+                </div>
+              </div>
+
+              <!-- Row 2: Region and Ward -->
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <label for="region" class="form-label">Region</label>
+                  <select id="bill_region" formControlName="bill_region" class="form-select">
+                    <option selected>Select</option>
+                    <option value="1">Region 1</option>
+                    <option value="2">Region 2</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label for="ward" class="form-label">Ward</label>
+                  <select id="bill_ward" class="form-select" formControlName="bill_ward">
+                    <option selected>Select</option>
+                    <option value="1">Ward 1</option>
+                    <option value="2">Ward 2</option>
+                  </select>
+                </div>
+                <!-- <div class="col-md-3">
+                  <label class="form-label">Is the patient employed?</label>
+                  <div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" formControlName="pemployed"
+                        (change)="checkemp($event)" id="employedYes" value="Yes">
+                      <label class="form-check-label">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" formControlName="pemployed"
+                        (change)="checkemp($event)" id="employedNo" value="No">
+                      <label class="form-check-label">No</label>
+                    </div>
+                  </div>
+                </div> -->
+                <div class="col-md-3">
+                  <label class="form-label">Is the patient employed?</label>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="pemployedToggle"
+                      [checked]="checkempstatus === 'Yes'" (change)="toggleEmp($event)" />
+                    <label class="form-check-label" for="pemployedToggle">
+                      {{ checkempstatus === 'Yes' ? 'Yes' : 'No' }}
+                    </label>
+                  </div>
+                </div>
+
+                <!-- <div class="col-md-3">
+                  <label class="form-label">Does the patient have next of kin?</label>
+                  <div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" formControlName="pnextofkin"
+                        (change)="checknextkeen($event)" id="nextOfKinYes" value="Yes">
+                      <label class="form-check-label">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" (change)="checknextkeen($event)"
+                        formControlName="pnextofkin" id="nextOfKinNo" value="No">
+                      <label class="form-check-label">No</label>
+                    </div>
+                  </div>
+                </div> -->
+                <div class="col-md-3">
+                  <label class="form-label">Does the patient have next of kin?</label>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="nextOfKinToggle"
+                      [checked]="nextkeentatus === 'Yes'" (change)="toggleNextOfKin($event)" />
+                    <label class="form-check-label" for="nextOfKinToggle">
+                      {{ nextkeentatus === 'Yes' ? 'Yes' : 'No' }}
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row">
+          <!-- Employment Section -->
+          <div class="col-md-6" *ngIf="employdiv">
+            <h5 class="bg-primary text-white p-2">Employment</h5>
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="status" class="form-label">Status</label>
+                <select id="pempstatus" formControlName="pempstatus" class="form-select">
+                  <option>Select</option>
+                  <option value="status">status</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="employer" class="form-label">Employer</label>
+                <input id="employer" formControlName="pemployer" type="text" class="form-control"
+                  placeholder="Enter employer">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="country" class="form-label">Country</label>
+                <select id="country" formControlName="pempcountry" name="pempcountry" class="form-select">
+                  <option selected>Select</option>
+                  <option value="1">India</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="province" class="form-label">Province</label>
+                <select id="province" formControlName="pempprovince" class="form-select">
+                  <option selected> Select</option>
+                  <option value="1">Province 1</option>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="city" class="form-label">City</label>
+                <select id="city" formControlName="pempcity" class="form-select">
+                  <option selected>Select</option>
+                  <option value="1">City 1 </option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="suburb" class="form-label">Suburb Region</label>
+                <select id="suburb" formControlName="pempsuburb" class="form-select">
+                  <option selected>Select</option>
+                  <option value="1">Suburb 1</option>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="address" class="form-label">Address</label>
+                <input id="address" type="text" class="form-control" formControlName="pempaddress"
+                  placeholder="Enter a location">
+              </div>
+              <div class="col-6">
+                <label for="areaCode" class="form-label">Area Code</label>
+                <input id="areaCode" type="text" formControlName="pempcode" class="form-control"
+                  placeholder="Enter area code">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="contactNumber" class="form-label">Contact Number</label>
+                <input id="contactNumber" type="text" class="form-control" formControlName="pempcontact"
+                  placeholder="EG - 27843938590">
+              </div>
+              <div class="col-6">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" type="email" formControlName="pempemail" class="form-control"
+                  placeholder="Enter email">
+              </div>
+            </div>
+          </div>
+
+          <ng-container *ngIf="nextofkeendiv">
+            <div *ngFor="let section of nextOfKinSections; let i = index" class="col-md-6 mb-4">
+              <h5 class="bg-primary text-white p-2">
+                Next of Kin {{ i + 1 }}
+                <button class="btn btn-danger btn-sm float-end" (click)="removeNextOfKin(i)"
+                  *ngIf="nextOfKinSections.length > 1">
+                  Remove
+                </button>
+              </h5>
+
+              <!-- Section Content -->
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label [for]="'relationship-' + section.id" class="form-label">Relationship</label>
+                  <select [id]="'relationship-' + section.id" class="form-select"
+                    [formControl]="kinDetail.at(i).get('relationship')">
+                    <option>Select</option>
+                    <!-- Add more options as needed -->
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label [for]="'name-' + section.id" class="form-label">Name</label>
+                  <input [id]="'name-' + section.id" type="text" class="form-control" placeholder="Enter name"
+                    [formControl]="kinDetail.at(i).get('name')">
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label [for]="'last-name-' + section.id" class="form-label">Last Name</label>
+                  <input [id]="'last-name-' + section.id" type="text" class="form-control" placeholder="Enter last name"
+                    [formControl]="kinDetail.at(i).get('last_name')">
+                </div>
+                <div class="col-6">
+                  <label [for]="'country-' + section.id" class="form-label">Country</label>
+                  <select [id]="'country-' + section.id" class="form-select"
+                    [formControl]="kinDetail.at(i).get('country')">
+                    <option>Select</option>
+                    <!-- Add more options as needed -->
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label [for]="'province-' + section.id" class="form-label">Province</label>
+                  <select [id]="'province-' + section.id" class="form-select"
+                    [formControl]="kinDetail.at(i).get('province')">
+                    <option>Select</option>
+                    <!-- Add more options as needed -->
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label [for]="'city-' + section.id" class="form-label">City</label>
+                  <select [id]="'city-' + section.id" class="form-select" [formControl]="kinDetail.at(i).get('city')">
+                    <option>Select</option>
+                    <!-- Add more options as needed -->
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label [for]="'sub-region-' + section.id" class="form-label">Suburb Region</label>
+                  <select [id]="'sub-region-' + section.id" class="form-select"
+                    [formControl]="kinDetail.at(i).get('sub_region')">
+                    <option>Select</option>
+                    <!-- Add more options as needed -->
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label [for]="'address-' + section.id" class="form-label">Address</label>
+                  <input [id]="'address-' + section.id" type="text" class="form-control" placeholder="Enter Address"
+                    [formControl]="kinDetail.at(i).get('address')">
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label [for]="'area-code-' + section.id" class="form-label">Area Code</label>
+                  <input [id]="'area-code-' + section.id" type="text" class="form-control" placeholder="Enter Area Code"
+                    [formControl]="kinDetail.at(i).get('area_code')">
+                </div>
+                <div class="col-6">
+                  <label [for]="'kin-contact-' + section.id" class="form-label">Contact Number</label>
+                  <input [id]="'kin-contact-' + section.id" type="text" class="form-control"
+                    placeholder="EG - 27843938590" [formControl]="kinDetail.at(i).get('contact_number')">
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label [for]="'kin-email-' + section.id" class="form-label">Email</label>
+                  <input [id]="'kin-email-' + section.id" type="email" class="form-control" placeholder="Enter email"
+                    [formControl]="kinDetail.at(i).get('email')">
+                </div>
+                <div class="col-6">
+                  <!-- Add More Button -->
+                  <br>
+                  <button class="btn btn-primary" type="button" (click)="addNextOfKin()">+ Add More</button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+        </div>
+      </div>
+      <!-- 
+      <div class="card">
+        <div class="card-header bg-primary text-white">Dependants</div>
+        <div class="card-body">
+          <div class="form-group mb-3">
+            <label>Does the patient have any dependants?</label>
+            <div>
+              <label class="form-check-label me-3">
+                <input type="radio" name="hasDependants" [(ngModel)]="hasDependants" [value]="true"
+                  class="form-check-input" />
+                Yes
+              </label>
+              <label class="form-check-label">
+                <input type="radio" name="hasDependants" [(ngModel)]="hasDependants" [value]="false"
+                  class="form-check-input" />
+                No
+              </label>
+            </div>
+          </div>
+
+          <div *ngIf="hasDependants">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Surname</th>
+                  <th>ID Number</th>
+                  <th>Age</th>
+                  <th>Relationship</th>
+                  <th>Dependant Code</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let dependant of dependants; let i = index; trackBy: trackByIndex">
+                  <td>
+                    <input type="text" [(ngModel)]="dependant.name" class="form-control" placeholder="Name" />
+                  </td>
+                  <td>
+                    <input type="text" [(ngModel)]="dependant.surname" class="form-control" placeholder="Surname" />
+                  </td>
+                  <td>
+                    <input type="text" [(ngModel)]="dependant.idNumber" class="form-control" placeholder="ID Number" />
+                    <div *ngIf="dependant.idNumber && dependant.idNumber.length !== 13" class="text-danger">
+                      Please enter a 13-digit ID number
+                    </div>
+                  </td>
+                  <td>
+                    <input type="number" [(ngModel)]="dependant.age" class="form-control" placeholder="Age" />
+                  </td>
+                  <td>
+                    <select [(ngModel)]="dependant.relationship" class="form-select">
+                      <option>Select</option>
+                      <option *ngFor="let relation of relationships" [value]="relation">{{ relation }}</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input type="text" [(ngModel)]="dependant.dependantCode" class="form-control" placeholder="Code" />
+                  </td>
+                  <td>
+                    <button *ngIf="i === dependants.length - 1" class="btn btn-primary" (click)="addRow()">
+                      Add More
+                    </button>
+                    <button *ngIf="i !== 0" class="btn btn-danger" (click)="removeRow(i)">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="row">
+        <div class="row">
+          <!-- First Card: Upload Patient Documents -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                Upload Patient Documents
+              </div>
+              <div class="card-body">
+                <div class="form-group mb-3">
+                  <label for="upload_doc">Select Files (You can select multiple files)</label>
+                  <div>
+                    <!-- Input field to allow multiple file selection -->
+                    <input type="file" name="upload_doc" id="upload_doc" class="form-control"
+                      (change)="onFilesSelected($event)" multiple>
+                  </div>
+                  <!-- Display the names of the selected files below the input -->
+                  <div *ngIf="selectedFiles.length > 0" class="mt-3">
+                    <h5>Selected Files:</h5>
+                    <ul>
+                      <li *ngFor="let file of selectedFiles; let i = index">
+                        {{ file.name }}
+                      </li>
+                    </ul>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Second Card: Patient Digital Signature -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header bg-primary text-white">Patient Signature with Mouse </div>
+              <div class="card-body">
+                <div class="form-group mb-3">
+                  <label></label>
+                  <div>
+                    <canvas #signatureCanvas2 width="300" height="150" style="border: 1px solid black;"
+                      (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()"
+                      (mouseleave)="onMouseUp()">
+                    </canvas>
+
+                  </div>
+                </div>
+                <button class="btn btn-primary" type="button" (click)="clearSignature()">Clear
+                  Signature</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-success" type="button" (click)="saveSignature()">Save</button>
+              </div>
+              <input type="hidden" id="signatureFilename" formControlName="signatureFilename">
+              <input type="hidden" id="signaturePath" name="signaturePath">
+            </div>
+          </div>
+
+          <!-- Third Card: Capture Live Picture -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header bg-primary text-white">Capture Live Picture</div>
+              <div class="card-body">
+                <div class="form-group mb-3">
+                  <label>Capture a Picture</label>
+                  <div>
+                    <!-- Video element to show the webcam feed -->
+                    <video #webcam width="65%" height="auto" autoplay></video>
+                  </div>
+                </div>
+                <div class="form-group mb-3">
+                  <!-- Button to capture the image -->
+                  <button class="btn btn-primary" type="button" (click)="captureImage()">Capture Picture</button>
+                </div>
+                <div class="form-group mb-3">
+                  <!-- Canvas to display the captured image -->
+                  <canvas #capturedImage style="display:none;"></canvas>
+                  <img #capturedImagePreview src="" alt="Captured Image"
+                    style="width: 100%; margin-top: 10px; display: none;">
+                </div>
+                <!-- Hidden input field to store the image path -->
+                <input type="hidden" id="imagePath" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+      <button type="submit" class="btn btn-primary w-md">Submit</button>
+
+    </form>
+
+    <!-- <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div> -->
+  </div>
+</div>

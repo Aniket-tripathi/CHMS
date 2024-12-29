@@ -1,0 +1,361 @@
+<div class="container-fluid">
+    <app-page-title title="Add New Vitals" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h4 class="card-title mb-4" style="margin: 0;">Add New Vitals</h4>
+                        <button type="button" [routerLink]="['/vital/list']" class="btn btn-primary"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                            Vitals List
+                        </button>
+                    </div>
+
+                    <form [formGroup]="vitalForm" (ngSubmit)="onSubmit()">
+                        <div class="row">
+                            <div class="col-md-3" *ngIf="checkrole === 'superadmin'">
+                                <div class="mb-3">
+                                    <label for="clinicName">Clinic</label>
+                                    <span class="text-danger">*</span>
+                                    <select id="vitalclinic" class="form-control" formControlName="vitalclinic"
+                                        (change)="getvst($event.target.value)">
+                                        <option value="">Select Clinic</option>
+                                        <option *ngFor="let clinic of clinicData" [value]="clinic?.clinicid">
+                                            {{ clinic?.clinicname }}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f.vitalclinic.errors" class="text-danger">
+                                        Clinic is required.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="checkrole !== 'superadmin'">
+                                <input type="hidden" formControlName="vitalclinic" id="vitalclinic" [(ngModel)]="cid"
+                                    class="form-control">
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="visitNo">Visit No</label>
+                                    <span class="text-danger">*</span>
+                                    <select id="vitalvstid" (change)="getvisitdetails($event)" class="form-control"
+                                        formControlName="vitalvstid">
+                                        <option value="">Select Visit No</option>
+                                        <option *ngFor="let visit of visitList" [value]="visit.vid">
+                                            {{ visit.visit_no }}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f.vitalvstid.errors" class="text-danger">
+                                        Visit No is required.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="mb-2">
+                                    <label for="masterpatientindex">Master Patient Index</label>
+                                    <span class="text-danger">*</span>
+                                    <input type="text" class="form-control" id="masterpatientindex"
+                                        formControlName="masterpatientindex" placeholder="" [value]="mpi|| ''"
+                                        readonly />
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="mb-2">
+                                    <label for="pname">Patient Name</label>
+                                    <span class="text-danger">*</span>
+                                    <input type="text" class="form-control" id="pname" formControlName="pname"
+                                        [value]="fullnames|| ''" placeholder="" readonly />
+                                    <input type="hidden" class="form-control" id="patient_id"
+                                        formControlName="patient_id" />
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="mb-2">
+                                    <label for="age">Age</label>
+                                    <span class="text-danger">*</span>
+                                    <input type="number" class="form-control" id="age" formControlName="age"
+                                        [value]="age|| ''" placeholder="" />
+
+                                </div>
+                            </div>
+                            <div class="col-md-3" *ngIf="checkrole !== 'superadmin'">
+
+                            </div>
+
+                            <div class="col-md-2" id="divtop">
+                                <span class="badge" [ngClass]="badgeClass">{{ outputText }}</span>
+                                <div class="mb-2">
+                                    <label for="bodytemp">Body Temperature</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="bodytemp"
+                                            formControlName="temprature" placeholder="temprature"
+                                            (input)="checkBodyTemp()" />
+                                        <span class="input-group-text" id="ccode">°C</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2" id="divtop">
+                                <span class="badge" [ngClass]="badgeresp">{{ outputresp }}</span>
+                                <div class="mb-2">
+                                    <label for="respirationRate">Respiration Rate</label>
+
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="respiration"
+                                            formControlName="respiration" placeholder="Rate"
+                                            (input)="checkrespiration()" />
+                                        <span class="input-group-text" id="unit">bpm</span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-2" id="divtop">
+                                <span class="badge" [ngClass]="badgepulse">{{ outputpulse }}</span>
+                                <div class="mb-2">
+                                    <label for="pulseRate">Pulse Rate</label>
+
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="pulse" formControlName="pulse"
+                                            placeholder="Rate" (input)="checkrpulseRate($event)" />
+                                        <span class="input-group-text" id="unit">bpm</span>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-3" id="divtop">
+                                <span class="badge" [ngClass]="badgebloodp">{{ outputbloodp }}</span>
+                                <div class="mb-3">
+                                    <label for="bloodPressure">Blood Pressure</label>
+
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" (input)="checkbloodp($event)"
+                                            id="bloodp" formControlName="bloodp" placeholder="Blood Pressure" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3" id="divtop">
+                                <span class="badge" [ngClass]="badgepeakflow">{{ outputpeakflow }}</span>
+                                <div class="mb-3">
+                                    <label for="peakflow">Peak Flow</label>
+
+                                    <div class="input-group">
+                                        <!-- Peak Flow Input Field -->
+                                        <input type="number" class="form-control" id="peakflow"
+                                            formControlName="peakflow" (input)="PeakFlow($event)"
+                                            placeholder="Peak Flow" step="1" min="0" />
+                                        <span class="input-group-text">Liters per minute</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2" id="divtop">
+                                <span class="badge" [ngClass]="badgebloodg">{{ outputbloodg }}</span>
+                                <div class="mb-2">
+                                    <label for="bloodGlucose">Blood Glucose</label>
+
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="bloodglucose"
+                                            formControlName="bloodglucose" (input)="Bloodglucose($event)"
+                                            placeholder="Glucose" />
+                                        <span class="input-group-text" id="unit">mg/dL</span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-2" id="divtop">
+                                <span class="badge" [ngClass]="badgebodyw">{{ outputbodyw }}</span>
+                                <div class="mb-2">
+                                    <label for="bodyWeight">Body Weight</label>
+
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="weight" formControlName="weight"
+                                            (input)="BodyWeight($event)" placeholder="Weight" />
+                                        <span class="input-group-text">kg</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2" id="divtop">
+                                <span class="badge" [ngClass]="badgebodyh">{{ outputbodyh }}</span>
+                                <div class="mb-2">
+                                    <label for="patientHeight">Patient Height</label>
+
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="height" formControlName="height"
+                                            (input)="calculateBMI($event)" placeholder="Height" />
+                                        <span class="input-group-text">cm</span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-md-6" id="divtop">
+                                <div class="mb-3">
+                                    <label for="urn">Urinalysis</label>
+
+                                    <div class="row">
+                                        <!-- First Column -->
+                                        <div class="col-md-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox" class="form-check-input me-2" id="blood"
+                                                    formControlName="blood" />
+                                                <label class="form-check-label" for="blood">Blood</label>
+                                            </div>
+
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox" class="form-check-input me-2" id="glucose"
+                                                    formControlName="glucose" />
+                                                <label class="form-check-label" for="glucose">Glucose</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Second Column -->
+                                        <div class="col-md-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox" class="form-check-input me-2" id="urobilinogen"
+                                                    formControlName="urobilinogen" />
+                                                <label class="form-check-label" for="urobilinogen">Urobilinogen</label>
+                                            </div>
+
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox" class="form-check-input me-2" id="leukocytes"
+                                                    formControlName="leukocytes" />
+                                                <label class="form-check-label" for="leukocytes">Leukocytes</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Third Column -->
+                                        <div class="col-md-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox" class="form-check-input me-1" id="bilirubin"
+                                                    formControlName="bilirubin" />
+                                                <label class="form-check-label" for="bilirubin">Bilirubin</label>
+                                            </div>
+
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox" class="form-check-input me-2" id="protein"
+                                                    formControlName="protein" />
+                                                <label class="form-check-label" for="protein">Protein</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Fourth Column -->
+                                        <div class="col-md-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox" class="form-check-input me-1" id="nitrate"
+                                                    formControlName="nitrate" />
+                                                <label class="form-check-label" for="nitrate">Nitrate</label>
+                                            </div>
+
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox" class="form-check-input me-2" id="ketones"
+                                                    formControlName="ketones" />
+                                                <label class="form-check-label" for="ketones">Ketones</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Fifth Column -->
+                                        <div class="col-md-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox" class="form-check-input me-2" id="phlevel"
+                                                    formControlName="phlevel" />
+                                                <label class="form-check-label" for="phlevel">PH Level</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-3" id="divtop">
+                                <div class="mb-3">
+                                    <label for="bmi">Body Mass Index (BMI)</label>
+
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="body_mass_index"
+                                            formControlName="body_mass_index" placeholder="BMI" step="0.1" readonly
+                                            [value]="bmi || ' '" />
+                                        <!-- <span class="input-group-text" id="ccode">kg/m²</span> -->
+                                    </div>
+
+                                </div>
+                            </div>
+                            <input type="hidden" id="gender" formControlName="gender" [value]="gender || ''"
+                                placeholder="" />
+
+                            <!-- Conditionally render this div if gender is not male -->
+                            <div class="col-md-2" *ngIf="gender !== 'Male'" id="divtop">
+                                <div class="mb-2">
+                                    <label>Pregnancy Test</label>
+                                    <select formControlName="pregnancy" id="pregnancy" class="form-control"
+                                        (change)="getcheck($event)">
+                                        <option value="">Select</option>
+                                        <option value="Negative">Negative</option>
+                                        <option value="Pregnancy">Pregnancy</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2" *ngIf="showWeekDiv" id="divtop">
+                                <div class="mb-2">
+                                    <label>Weeks Of Pregnancy</label>
+                                    <input type="number" class="form-control" id="weeks_of_pregnancy"
+                                        formControlName="weeks_of_pregnancy">
+                                </div>
+                            </div>
+
+                            <div class="col-md-2" id="divtop">
+                                <div class="mb-2">
+                                    <label>HB Test</label>
+                                    <input type="text" class="form-control" id="hb_test" formControlName="hb_test">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="vitalNotes">Vital Notes</label>
+
+                                    <textarea class="form-control" id="note" formControlName="note" rows="2"
+                                        placeholder="Enter any important notes here..."></textarea>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <button type="button" class="btn btn-secondary mt-4"
+                                style="border-radius: 8px;  color: #f2f4f7; padding: 10px 20px; border: none; margin-right: 10px;">
+                                Close
+                            </button>
+                            <button type="submit" class="btn btn-primary mt-4"
+                                style="border-radius: 8px;  color: white; padding: 10px 20px; border: none;">
+                                Save
+                            </button>
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

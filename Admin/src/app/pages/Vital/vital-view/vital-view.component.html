@@ -1,0 +1,132 @@
+<div class="row">
+
+
+  <!-- Patient Information Card -->
+  <div class="col-lg-4">
+    <div class="card">
+      <h5 class="card-header bg-transparent border-bottom text-uppercase">Patient Information</h5>
+      <div class="card-body">
+        
+        <!-- Name Section -->
+        <div class="mb-3">
+          <p><strong>Name:</strong> {{ vitalData?.vitals?.[0]?.fullname || 'N/A' }}</p>
+        </div>
+    
+        <!-- Gender Section -->
+        <div class="mb-3">
+          <p><strong>Gender:</strong> {{vitalData?.vitals?.[0]?.gender }}</p>
+        </div>
+    
+        <!-- Clinic Section -->
+        <div class="mb-3">
+          <p><strong>Clinic:</strong> {{ vitalData?.vitals?.[0]?.clinicname || 'N/A' }}</p>
+        </div>
+    
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Visit Details Card -->
+  <div class="col-lg-4">
+    <div class="card">
+      <h5 class="card-header bg-transparent border-bottom text-uppercase">Visit Details</h5>
+      <div class="card-body">
+        <h4 class="card-title mt-0">{{vitalData?.vitals?.[0]?.visit_no }}</h4>
+        <p><strong>Status:</strong> {{vitalData?.vitals?.[0]?.vital_status }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clinic Information Card -->
+  <div class="col-lg-4">
+    <div class="card">
+      <h5 class="card-header bg-transparent border-bottom text-uppercase">Vital Information</h5>
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <span>Blood Temperature: </span>
+          <h4 class="card-title mt-0 ms-2">{{ vitalData?.vitals[0]?.temprature }}</h4>&nbsp;&nbsp;
+          <span class="badge" [class]="badgebodyh">{{ outputbodyh }}</span>
+        </div>
+
+        <br>
+
+        <div class="d-flex align-items-center">
+          <span>Blood Pressure: </span>
+          <h4 class="card-title mt-0 ms-2">{{vitalData?.vitals?.[0]?.bloodp }}</h4>&nbsp;&nbsp;
+          <span class="badge" [class]="badgeBP">{{ outputBP }}</span>
+        </div>
+        <br>
+
+        <div class="d-flex align-items-center">
+          <span>Respiration Rate: </span>
+          <h4 class="card-title mt-0 ms-2">{{vitalData?.vitals?.[0]?.respiration }}</h4>&nbsp;&nbsp;
+          <span class="badge" [class]="badgeresp">{{ outputresp }}</span>
+        </div>
+        <br>
+
+        <div class="d-flex align-items-center">
+          <span>Pulse Rate:</span>
+          <h4 class="card-title mt-0 ms-2">{{ vitalData?.vitals?.[0]?.pulse }}</h4>&nbsp;&nbsp;
+          <span class="badge" [class]="badgepulse">{{ outputpulse }}</span>
+        </div>
+        <br>
+
+        <div class="d-flex align-items-center">
+          <span>Blood Glucose: </span>
+          <h4 class="card-title mt-0 ms-2">{{vitalData?.vitals?.[0]?.bloodglucose }}</h4>&nbsp;&nbsp;
+          <span class="badge" [class]="badgeBG">{{ outputBG }}</span>
+        </div>
+        <br>
+
+        <div class="d-flex align-items-center">
+          <span>Body Weight: </span>
+          <h4 class="card-title mt-0 ms-2">{{vitalData?.vitals?.[0]?.weight }}</h4>&nbsp;&nbsp;
+          <span class="badge" [class]="badgeBW">{{ outputBW }}</span>
+        </div>
+        <br>
+
+        <div class="d-flex align-items-center">
+          <span>Body Height: </span>
+          <h4 class="card-title mt-0 ms-2">{{vitalData?.vitals?.[0]?.height }}</h4>
+        </div>
+        <br>
+
+        <div class="d-flex align-items-center">
+          <span>Body Mass Index: </span>
+          <h4 class="card-title mt-0 ms-2">{{vitalData?.vitals?.[0]?.body_mass_index }}</h4>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="badge" [class]="badgeBMI">{{ outputBMI }}</span>
+        </div>
+        <br>
+
+        <div class="d-flex align-items-center">
+          <span>Peak Flow: </span>
+          <h4 class="card-title mt-0 ms-2">{{vitalData?.vitals?.[0]?.peakflow }}</h4>&nbsp;&nbsp;
+          <span class="badge" [class]="badgepeakflow">{{ outputpeakflow }}</span>
+        </div>
+        <br>
+        
+        <!-- Check if gender is Female and vitalData exists -->
+        <div>
+          <div class="d-flex align-items-center">
+            <span>Pregnancy: </span>
+            <h4 class="card-title mt-0 ms-2">{{ vitalData?.vitals?.[0]?.pregnancy }}</h4>
+          </div><br>
+
+          <div class="d-flex align-items-center">
+            <span>Weeks Of Pregnancy: </span>
+            <h4 class="card-title mt-0 ms-2">{{ vitalData?.vitals?.[0]?.weeks_of_pregnancy }}</h4>
+          </div><br>
+        </div>
+
+
+        <div class="d-flex align-items-center">
+          <span>Vital Notes: </span>
+          <h4 class="card-title mt-0 ms-2">{{vitalData?.vitals?.[0]?.note }}</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

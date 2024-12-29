@@ -1,0 +1,23 @@
+<h5 class="text-center" style="font-size: 24px; font-weight: bold;">
+    {{ counterData[0]?.clinicname || 'Clinic Name' }} Active Counters
+</h5>
+<button class="btn btn-sm btn-primary" (click)="getrefresh()">Refresh</button>
+<!-- Token Table (For Reference) -->
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Counter Name</th>
+            <th>Active Token</th>
+            <th>Waiting Tokens</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let cnt of counterData">
+            <td class="counter-name">{{ cnt.countername }}</td>
+            <td class="active-token">{{ cnt.current_token }}</td>
+            <td class="waiting-tokens">
+                <span *ngFor="let tkn of tokenData">{{ tkn.tokenno || 'Data is not available' }}</span>
+            </td>
+        </tr>
+    </tbody>
+</table>

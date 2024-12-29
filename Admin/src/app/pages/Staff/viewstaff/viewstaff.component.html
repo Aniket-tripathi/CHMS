@@ -1,0 +1,73 @@
+<div class="row">
+    <!-- Staff Details Card -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-light rounded">
+            <h5 class="card-header bg-primary text-white text-uppercase">Staff Details</h5>
+            <div class="card-body">
+                <h4 class="card-title text-dark mt-0">Username: <span class="text-muted">{{staffData?.staffs?.username || 'N/A'}}</span></h4>
+                <p><strong>Full Name:</strong> {{staffData?.staffs?.fname || 'N/A'}} {{staffData?.staffs?.lname || 'N/A'}}</p>
+                <p><strong>Gender:</strong> {{staffData?.staffs?.gender || 'N/A'}}</p>
+                <p><strong>Status: </strong> 
+                    <span class="badge" 
+                          [ngClass]="{'bg-danger': staffData?.staffs?.status === 'inactive', 
+                                      'bg-success': staffData?.staffs?.status === 'active'}">
+                      {{staffData?.staffs?.status || 'N/A'}}
+                    </span>
+                  </p>
+                  
+                <p><strong>Role:</strong> {{staffData?.staffs?.rolename || 'N/A'}}</p>
+                <p><strong>Staff Type:</strong> {{staffData?.staffs?.staffType === 'cadmin' ? 'Clinic Admin' : (staffData?.staffs?.staffType === 'cstaff' ? 'Clinic Staff' : 'N/A')}}</p>
+                <p><strong>Date of Birth:</strong> {{staffData?.staffs?.dob || 'N/A'}}</p>
+                <!-- <p><strong>Date of Joining:</strong> {{staffData?.staffs?.doj || 'N/A'}}</p> -->
+                <p><strong>Level:</strong> {{staffData?.staffs?.level || 'N/A'}}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Information Card -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-light rounded">
+            <h5 class="card-header bg-primary text-white text-uppercase">Contact Information</h5>
+            <div class="card-body">
+                <p><strong>Email:</strong> {{staffData?.staffs?.email || 'N/A'}}</p>
+                <p><strong>Phone Number:</strong> {{staffData?.staffs?.contactno || 'N/A'}}</p>
+                <p><strong>Address:</strong> {{staffData?.staffs?.address || 'N/A'}}</p>
+                <p><strong>Province:</strong> {{staffData?.staffs?.province || 'N/A'}}</p>
+                <p><strong>District:</strong> {{staffData?.staffs?.district || 'N/A'}}</p>
+                <p><strong>Subdistrict:</strong> {{staffData?.staffs?.subdistrict || 'N/A'}}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clinic Information Card -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-light rounded">
+            <h5 class="card-header bg-primary text-white text-uppercase">Clinic Information</h5>
+            <div class="card-body">
+                <p><strong>Clinic:</strong> {{staffData?.staffs?.clinicname || 'N/A'}}</p>
+                <p><strong>Department:</strong> {{staffData?.staffs?.deptname || 'N/A'}}</p>
+                <p><strong>Designation:</strong> {{staffData?.staffs?.designation || 'N/A'}}</p>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Additional Information Card -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-light rounded">
+            <h5 class="card-header bg-primary text-white text-uppercase">Additional Information</h5>
+            <div class="card-body">
+                <p><strong>Marital Status:</strong> {{staffData?.staffs?.maritalstatus || 'N/A'}}</p>
+                <p><strong>Qualification:</strong> {{staffData?.staffs?.qualification || 'N/A'}}</p>
+                <p><strong>Sanction Number:</strong> {{staffData?.staffs?.sancno || 'N/A'}}</p>
+                <p><strong>HPCSA Number:</strong> {{staffData?.staffs?.hpcsano || 'N/A'}}</p>
+                <p><strong>Employment Status:</strong> {{staffData?.staffs?.employmentStatus || 'N/A'}}</p>
+                <p><strong>Added By:</strong> {{staffData?.staffs?.added_by || 'N/A'}}</p>
+                <p><strong>Added Date:</strong> {{staffData?.staffs?.adddate || 'N/A'}}</p>
+                <p><strong>Added Time:</strong> {{staffData?.staffs?.addtime || 'N/A'}}</p>
+            </div>
+        </div>
+    </div>
+</div>

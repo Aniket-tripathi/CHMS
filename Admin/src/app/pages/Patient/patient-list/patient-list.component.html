@@ -1,0 +1,131 @@
+<div class="container-fluid">
+    <app-page-title title="View Patient" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                        </div>
+                        <div class="col-md-2" style="text-align:right;">
+                            <button type="button" [routerLink]="['/patient/add']" routerLinkActive="router-link-active"
+                            class="btn btn-primary"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                            Add Patient
+                        </button>
+                        </div>
+                    </div>  
+                    <h4 class="card-title">Patient Table</h4>
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="clinic-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="clinic-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div id="clinic-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2"
+                                        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="clinic-datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th sortable="">Clinic Name</th>
+                                    <th sortable="">Mpi No</th>
+                                    <th sortable="">First Name</th>
+                                    <th sortable="">Last Name</th>
+                                    <th sortable="">File No</th>
+                                    <th sortable="">Age</th>
+                                    <th style="width: 10%;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let patient of filteredPatients$ | async; let i = index">
+                                <tr>
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ patient.clinicname }}</td>
+                                    <td>{{ patient.mpino }}</td>
+                                    <td>{{ patient.firstname }}</td> 
+                                    <td>{{ patient.lastname }}</td>
+                                    <td>{{ patient.fileno }}</td>
+                                    <td>{{ patient.agep }}</td>
+                                    <td>
+                                        <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                                            <button [routerLink]="['/patient/view', patient.patientregid]" title="Patient View"
+                                                style="background: none; border: none; cursor: pointer; color: #007bff; font-size: 16px;">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button [routerLink]="['/patient/Demographic', patient.patientregid]" title="Demographic Pdf"
+                                            style="background: none; border: none; cursor: pointer; color: #007bff; font-size: 16px;">
+                                            <i class="fas fa-file"></i>
+                                        </button>
+                                        <button [routerLink]="['/visit/add', patient.patientregid]"
+                                        title="Add New Visit"
+                                        style="background: none; border: none; cursor: pointer; color: #007bff; font-size: 16px;">
+                                        <i class="fas fa-file-signature"></i>
+                                    </button>
+                                        </div>
+                                      
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-controls" style="text-align: right; margin-top: 10px;">
+                        <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                            Previous
+                        </button>
+
+                        <button (click)="onPageChange(page + 1)" [disabled]="page * pageSize >= totalPatients"
+                            class="pagination-button">
+                            Next
+                        </button>
+                    </div>
+
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

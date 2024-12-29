@@ -1,0 +1,53 @@
+.card-body a:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.card-body .badge:hover {
+    cursor: pointer;
+}
+
+.card-body {
+    background-color: #ffffff;
+    cursor: pointer;
+
+}
+
+//* Make the message green */
+.animated-message {
+    color: green;
+    font-size: 10px;
+    font-weight: bold;
+    display: inline-block;
+    white-space: nowrap;
+    /* Ensure the text doesn't break into multiple lines */
+    animation: scrollRightToLeft 3s ease-in-out infinite;
+}
+
+/* Define the animation for a subtle right to left movement */
+@keyframes scrollRightToLeft {
+    0% {
+        transform: translateX(0);
+        /* Start at normal position */
+    }
+
+    50% {
+        transform: translateX(10%);
+        /* Move slightly to the right */
+    }
+
+    100% {
+        transform: translateX(0);
+        /* Return to original position */
+    }
+}
+
+.counter-zero {
+  color: red;
+  font-weight: bold;
+}
+
+.counter-available {
+  color: green;
+  font-weight: normal;
+}

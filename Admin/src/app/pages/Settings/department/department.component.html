@@ -1,0 +1,303 @@
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- <app-page-title title="List Department"></app-page-title> -->
+
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title">List Department</h4> <button type="button"
+                            class="btn btn-primary btn waves-effect waves-light" data-bs-toggle="modal"
+                            data-bs-target=".bs-example-modal-center" (click)="centerDepartmentModal.show()">Add
+                            Department</button>
+
+                    </div>
+
+
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="role-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="role-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-12 col-md-6">
+                            <div id="department-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2"
+                                        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="department-datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th (click)="onSort('clinicname')">
+                                        Clinic Name
+                                        <span *ngIf="sortColumn === 'clinicname'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('deptname')">Department Name <span
+                                            *ngIf="sortColumn === 'deptname'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span></th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let department of filteredDept$ | async; let i = index">
+                                <tr>
+                                    <td>{{i+1}}</td>
+                                    <td>{{ department.clinicname }}</td>
+                                    <td>{{ department.deptname }}</td>
+                                    <td>
+                                        <div>
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editdepartmentModal"
+                                                (click)="openEditModal(department)"
+                                                style="background-color: #2196F3; border-color: #2196F3; color: white;">
+                                                Edit
+                                            </button>
+
+                                            <button class="btn btn-danger btn-sm ms-2"
+                                                (click)="deleteDept(department?.id)">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                    <!-- Pagination -->
+                    <div class="pagination-controls" style="text-align: right; margin-top: 10px;">
+                        <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                            Previous
+                        </button>
+
+                        <button (click)="onPageChange(page + 1)" [disabled] class="pagination-button">
+                            Next
+                        </button>
+                    </div>
+
+
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Model -->
+
+<div bsModal #centerDepartmentModal="bs-modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" role="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Add Department</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;"
+                    (click)="centerDepartmentModal?.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicName" style="font-weight: bold; color: #333;">Select Clinic<span
+                                        style="color: red;">*</span></label>
+                                <select formControlName="clinic_id" id="clinic_id" class="form-select"
+                                    style="border-radius: 8px; padding: 10px;">
+                                    <option value="">Select Clinic</option>
+                                    <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">
+                                        {{ clinic.clinicname }}
+                                    </option>
+
+                                </select>
+                                <div *ngIf="submitted && f.clinic_id.errors" class="text-danger">
+                                    Clinic is required.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="departmentName" style="font-weight: bold; color: #333;">Department
+                                    Name<span style="color: red;">*</span></label>
+                                <input type="text" id="deptname" class="form-control" formControlName="deptname"
+                                    placeholder="Enter Department Name"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+
+                                <div *ngIf="submitted && f.deptname.errors" class="text-danger">
+                                    Department Name is required.
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description" style="font-weight: bold; color: #333;">Description<span
+                                        style="color: red;">*</span></label>
+                                <textarea id="deptdesc" class="form-control" formControlName="deptdesc"
+                                    placeholder="Enter Description" rows="2" style="border-radius: 8px; padding: 10px;">
+                                </textarea>
+                                <div *ngIf="submitted && f.deptdesc.errors" class="text-danger">
+                                    Description is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            (click)="centerDepartmentModal?.hide()"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;"
+                            #closeButton>
+                            Close
+                        </button>
+
+                        <button type="submit" class="btn btn-primary"
+                            style="border-radius: 8px; color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<!-- Edit Model -->
+
+<div class="modal fade" id="editdepartmentModal" tabindex="-1" department="dialog"
+    aria-labelledby="editdepartmentModallabel" aria-hidden="true">
+    <div class="modal-dialog" department="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Edit Department</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form #editdepartmentForm="ngForm">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicName" style="font-weight: bold; color: #333;">Select Clinic <span
+                                        style="color: red;">*</span></label>
+                                <select class="form-control" [(ngModel)]="selectedDepartment.clinic_id"
+                                    style="border-radius: 8px; padding: 10px;" name="clinic_id" class="form-select">
+                                    <option disabled>Select Clinic</option>
+                                    <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">
+                                        {{ clinic.clinicname }}
+                                    </option>
+                                </select>
+                                <div *ngIf="submitted && f.clinic_id.errors" class="text-danger">
+                                    Clinic is required.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="departmentName" style="font-weight: bold; color: #333;">Department
+                                    Name<span style="color: red;">*</span></label>
+                                <input type="text" id="deptname" [(ngModel)]="selectedDepartment.deptname"
+                                    name="deptname" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+
+                                <div *ngIf="submitted && f.deptname.errors" class="text-danger">
+                                    Department Name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description" style="font-weight: bold; color: #333;">Description <span
+                                        style="color: red;">*</span></label>
+                                <textarea id="deptdesc" [(ngModel)]="selectedDepartment.deptdesc" name="deptdesc"
+                                    class="form-control" required rows="2" style="border-radius: 8px; padding: 10px;">
+                                </textarea>
+                                <div *ngIf="submitted && f.deptdesc.errors" class="text-danger">
+                                    Description is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="closeEditModalButton"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;">
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-primary" (click)="editDepartment()"
+                            style="border-radius: 8px;  color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+</div>

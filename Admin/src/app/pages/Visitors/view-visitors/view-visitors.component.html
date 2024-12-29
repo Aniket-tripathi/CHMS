@@ -1,0 +1,39 @@
+<div class="row">
+  <!-- Visit Details Card -->
+  <div class="col-lg-4">
+    <div class="card">
+      <h5 class="card-header bg-transparent border-bottom text-uppercase">Visit Details</h5>
+      <div class="card-body">
+        <h4 class="card-title mt-0">{{visitData?.visits?.visit_no }}</h4>
+        <p><strong>Visit Date:</strong> {{visitData?.visits?.visit_date }}</p>
+        <p><strong>Visit Type:</strong> {{visitData?.visits?.visit_type }}</p>
+        <p><strong>Referred By:</strong> {{visitData?.visits?.referred_by }}</p>
+        <p><strong>Status:</strong> {{visitData?.visits?.status === '1' ? 'Active' : 'Inactive' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Patient Information Card -->
+  <div class="col-lg-4">
+    <div class="card">
+      <h5 class="card-header bg-transparent border-bottom text-uppercase">Patient Information</h5>
+      <div class="card-body">
+        <h4 class="card-title mt-0">{{visitData?.visits?.fullname }}</h4>
+        <p><strong>Age:</strong> {{visitData?.visits?.agep }}</p>
+        <p><strong>Phone Number:</strong> {{visitData?.visits?.patientpno }}</p>
+        <p><strong>Email:</strong> {{visitData?.visits?.patientemail }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clinic Information Card -->
+  <div class="col-lg-4">
+    <div class="card">
+      <h5 class="card-header bg-transparent border-bottom text-uppercase">Clinic Information</h5>
+      <div class="card-body">
+        <h4 class="card-title mt-0">{{visitData?.visits?.clinicname }}</h4>
+        <!-- <p><strong>Clinic ID:</strong> {{visitData?.visits?.visit_clinicid }}</p> -->
+      </div>
+    </div>
+  </div>
+</div>

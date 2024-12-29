@@ -1,0 +1,102 @@
+/* General Container Styling */
+.card {
+  width: 100%;
+  margin: 20px auto;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Search Bar Styles */
+.search-container {
+  text-align: right;
+  margin-bottom: 15px;
+}
+
+.search-bar {
+  padding: 8px;
+  font-size: 14px;
+  width: 250px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+.search-bar:focus {
+  border-color: #007bff;
+}
+
+/* Table Styles */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table th, .table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+/* Pagination Styles */
+.pagination {
+  display: flex;
+  justify-content: flex-end; /* Align pagination to the right */
+  margin-top: 20px;
+}
+
+.page-btn {
+  padding: 6px 14px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.page-btn:hover {
+  background-color: #0056b3;
+}
+
+.page-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.page-number {
+  padding: 6px 12px;
+  font-size: 14px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.page-number:hover {
+  background-color: #f1f1f1;
+}
+
+.page-number.active {
+  background-color: #007bff;
+  color: white;
+}

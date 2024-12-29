@@ -1,0 +1,95 @@
+.sortable {
+    cursor: pointer;
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: #f8f9fa; /* Light gray on hover */
+  }
+  
+  .sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  
+  .form-control-sm {
+    text-align: center;
+    padding: 0.25rem 0.5rem;
+  }
+  
+//   input:focus {
+//     outline: none;
+//     border-color: #0d6efd;
+//     box-shadow: 0 0 4px rgba(13, 110, 253, 0.5);
+//   }
+  /* Remove the black border in header and rows */
+.table th, 
+.table td {
+  border: 1px solid #ddd !important; /* Use light grey instead of black */
+}
+
+/* Optional: Remove header-specific borders */
+.table thead th {
+  border-bottom: 2px solid #ccc !important; /* Add a cleaner bottom border for headers */
+}
+
+/* Row styling for better separation */
+.table tbody tr {
+  border: none; /* Remove black border in between rows */
+}
+
+/* Clean and subtle row border */
+.table-bordered td, 
+.table-bordered th {
+  border: 1px solid #e0e0e0 !important; /* Very light border */
+}
+
+/* Optional: Remove borders between rows for new dates */
+.table tbody tr:not(:first-child) td {
+  border-top: none; /* Remove top borders between rows */
+}
+/* Override table header background color */
+.table-light {
+    background-color: #f0f0f0 !important; /* Light grey background */
+  }
+  
+  /* Optional: Change text color in the header */
+  .table-light th {
+    color: #333; /* Dark grey text color */
+  }
+  
+  /* Optional: Add a subtle shadow to header for better visibility */
+  .table-light th {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+
+
+
+  /* Ensure the time inputs are responsive and neatly aligned */
+td .d-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  td input[type="time"] {
+    width: 120px; /* You can adjust this width to your liking */
+    text-align: center;
+  }
+  
+  td input[type="text"] {
+    max-width: 80px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+  }
+  
+  @media (max-width: 576px) {
+    td input[type="time"] {
+      width: 100px; /* Adjust input size for small screens */
+    }
+    td input[type="text"] {
+      max-width: 60px; /* Adjust text input size for small screens */
+    }
+  }
+  

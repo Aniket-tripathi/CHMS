@@ -1,0 +1,587 @@
+<div class="container-fluid">
+  <app-page-title title="Appointment" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <!-- Start Form Wizard Basic row -->
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- <h4 class="card-title mb-4">Add Appointment</h4> -->
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 class="card-title mb-4" style="margin: 0;">Add Appointment</h4>
+            <button type="button" [routerLink]="['/appointment/list']" routerLinkActive="router-link-active"
+              class="btn btn-primary"
+              style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Appointment
+              List</button>
+          </div>
+          <div id="basic-example">
+
+            <ng-stepper #cdkStepper [linear]="true" class="wizard">
+
+              <form [formGroup]="appointmentForm">
+
+
+                <!-- start 1 wizard -->
+                <cdk-step [optional]="false">
+                  <ng-template cdkStepLabel>
+                    <span class="number">1.</span>
+                    <span>Patient Details</span>
+                  </ng-template>
+                  <section *ngIf="cdkStepper.selectedIndex === 0">
+
+                    <div class="row">
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label class="form-label">Patient Type <span class="text-danger">*</span></label>
+                          <div class="d-flex">
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" id="registered" value="Registered"
+                                formControlName="patientType" (change)="toggleFields()">
+                              <label class="form-check-label" for="registered">Registered</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" id="unregistered" value="Unregistered"
+                                formControlName="patientType" (change)="toggleFields()">
+                              <label class="form-check-label" for="unregistered">Unregistered</label>
+                            </div>
+                          </div>
+                          <div *ngIf="submitted && f.patientType.errors" class="text-danger">
+                            Patient type is required.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-2">
+                        <div class="mb-3">
+                          <label for="clinic" class="form-label">Clinic<span class="text-danger">*</span></label>
+                          <select id="apnt_clinicid" class="form-select" formControlName="apnt_clinicid"
+                            (change)="onClinicChangeAndGetptn($event)">
+                            <option value="">Select</option>
+                            <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">{{ clinic.clinicname }}
+                            </option>
+                          </select>
+                          <div *ngIf="submitted && f.apnt_clinicid.errors" class="text-danger">
+                            Clinic is required.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-lg-2" *ngIf="appointmentForm.get('patientType')?.value === 'Registered'">
+                        <label for="mpiNumber" class="form-label">Select Mpi No <span
+                            class="text-danger">*</span></label>
+                        <select formControlName="patient_mpi" id="patient_mpi" (change)="getmpidetails($event)"
+                          class="form-control">
+                          <option value="">Select Mpi</option>
+                          <option *ngFor="let patient of mpinoList" [value]="patient.patientregid">
+                            {{ patient.mpino }}
+                          </option>
+                        </select>
+                        <div *ngIf="submitted && f.patient_mpi.errors" class="text-danger">
+                          MPI Number is required.
+                        </div>
+                        <div *ngIf="message" class="alert alert-info">
+                          {{ message }}
+                        </div>
+                      </div>
+
+
+
+
+                      <div class="col-lg-2"
+                        *ngIf="appointmentForm.get('app_nationality')?.value === 'South African' && appointmentForm.get('patientType')?.value === 'Unregistered'">
+                        <label for="idNumber" class="form-label">ID Number <span class="text-danger">*</span></label>
+                        <input type="text" id="patient_idno" class="form-control" formControlName="patient_idno"
+                          onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="13"
+                          autocomplete="off" placeholder="Enter ID Number" />
+
+                        <div *ngIf="submitted && f.patient_idno.errors" class="text-danger">
+                          ID Number is required.
+                        </div>
+                        <!-- Error messages -->
+                        <div *ngIf="appointmentForm.get('patient_idno')?.hasError('invalidId')" class="text-danger">
+                          Please enter a valid South African ID number.
+                        </div>
+                        <div *ngIf="appointmentForm.get('patient_idno')?.hasError('maxlength')" class="text-danger">
+                          ID Number must be exactly 13 digits.
+                        </div>
+                      </div>
+
+
+
+                      <div class="col-lg-2"
+                        *ngIf="appointmentForm.get('app_nationality')?.value === 'Non-South African'">
+                        <label for="passport" class="form-label">Passport<span class="text-danger">*</span></label>
+                        <input type="text" id="app_passport" class="form-control" maxlength="10"
+                          formControlName="app_passport" autocomplete="off" placeholder="Enter Passport Number" />
+                        <div *ngIf="submitted && f.app_passport.errors" class="text-danger">
+                          <div *ngIf="f.app_passport.errors.required">Passport Number is required.</div>
+                          <div *ngIf="f.app_passport.errors.pattern">Invalid passport format. Use alphanumeric
+                            characters only.</div>
+                        </div>
+                      </div>
+
+
+
+                      <div class="col-lg-2">
+                        <label for="gender" class="form-label">Gender<span class="text-danger">*</span></label>
+
+                        <select formControlName="gender" id="gender" class="form-control">
+                          <option value="">Select</option>
+                          <option value="Female">Female</option>
+                          <option value="Male">Male</option>
+
+
+                        </select>
+
+                        <div *ngIf="submitted && f.gender.errors" class="text-danger">
+                          Gender is required.
+                        </div>
+                      </div>
+
+                      <div class="col-lg-2">
+                        <label for="dob" class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                        <input type="date" id="patient_dob" class="form-control" formControlName="patient_dob" />
+                        <div *ngIf="submitted && f.patient_dob.errors" class="text-danger">
+                          Date of Birth is required.
+                        </div>
+                      </div>
+                    </div>
+
+
+
+                    <div class="row">
+                      <div *ngIf="appointmentForm.get('patientType')?.value === 'Unregistered'" class="row">
+                        <div class="col-md-3 mb-3">
+                          <label class="form-label">Nationality <span class="text-danger">*</span></label>
+                          <div class="d-flex">
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" id="southAfrican" value="South African"
+                                formControlName="app_nationality" (change)="clearFields()" />
+                              <label class="form-check-label" for="southAfrican">South African</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" id="nonSouthAfrican"
+                                value="Non-South African" formControlName="app_nationality" (change)="clearFields()" />
+                              <label class="form-check-label" for="nonSouthAfrican">Non-South African</label>
+                            </div>
+                          </div>
+
+                        </div>
+
+
+
+
+
+
+
+
+
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label for="patient_name" class="form-label">Patient Name<span
+                              class="text-danger">*</span></label>
+                          <input type="text" id="patient_name" class="form-control" formControlName="patient_name"
+                            autocomplete="off" />
+
+
+
+                          <div *ngIf="submitted && f.patient_name.errors" class="text-danger">
+                            Patient Name is required.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label for="email" class="form-label">Email<span class="text-danger">*</span></label>
+                          <input type="text" id="email" class="form-control" formControlName="email"
+                            autocomplete="off" />
+
+                          <div *ngIf="submitted && f.email.errors" class="text-danger">
+                            Email is required.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label for="contactno" class="form-label">Contact No<span class="text-danger">*</span></label>
+                          <input type="text" id="mobileno" class="form-control" formControlName="mobileno"
+                            onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10"
+                            autocomplete="off" />
+
+                          <div *ngIf="submitted && f.mobileno.errors" class="text-danger">
+                            Contact no is required.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label for="notes" class="form-label">Notes</label>
+                          <textarea id="notes" class="form-control" rows="2" formControlName="notes"
+                            autocomplete="off"></textarea>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                      <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                          cdkStepperPrevious>Previous</button></li>
+                      <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                          cdkStepperNext>Next</button></li>
+                    </ul>
+                  </section>
+                </cdk-step>
+
+                <!-- end 1 wizard -->
+
+
+
+                <!-- start 2nd wizrd -->
+                <cdk-step [optional]="true">
+                  <ng-template cdkStepLabel>
+                    <span class="number">2.</span>
+                    <span>Schedule Details</span>
+                  </ng-template>
+                  <section *ngIf="cdkStepper.selectedIndex === 1">
+
+                    <div class="row">
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label for="appointment_date" class="form-label">Appointment Date <span
+                              class="text-danger">*</span></label>
+                          <input type="date" id="appointment_date" class="form-control"
+                            formControlName="appointment_date" [min]="minDate" (change)="onDateChange()" />
+                          <div *ngIf="submitted &&  f.appointment_date.errors" class="text-danger">
+                            Appointment date is required.
+                          </div>
+                        </div>
+                      </div>
+
+
+
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label for="appointment_time" class="form-label">Clinic Schedule<span
+                              class="text-danger">*</span></label>
+                          <select id="appointment_time" class="form-select" formControlName="appointment_time"
+                            (focus)="onSlotFocus()" (change)="onSlotChange($event)"
+                            [disabled]="!apnt_clinicid || !appointment_date">
+                            <option value="">Select Slot</option>
+                            <option *ngFor="let slot of availableSlots" [value]="slot.cwhfrom + '-' + slot.cwhto">
+                              {{ slot.cwhfrom }} - {{ slot.cwhto }}
+                            </option>
+                          </select>
+                          <div *ngIf="submitted && f.appointment_time.errors" class="text-danger">
+                            Time Schedule is required.
+                          </div>
+                          <div *ngIf="showSlotclinicWarning" class="text-danger">
+                            Please select clinic
+                          </div>
+                          <div *ngIf="showSlotdateWarning" class="text-danger">
+                            Please date first.
+                          </div>
+
+                        </div>
+                      </div>
+
+
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+
+
+
+                          <label for="apnt_reminder" class="form-label">Reminder</label>
+                          <select id="apnt_reminder" class="form-select" formControlName="apnt_reminder">
+                            <option value="">Select</option>
+                            <option value="1 day">1 Day</option>
+                            <option value="3 days">3 Days</option>
+                            <option value="1 week">1 Week</option>
+                          </select>
+                        </div>
+                      </div>
+
+
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label for="apnt_type" class="form-label">Appointment Type<span
+                              class="text-danger">*</span></label>
+                          <select id="apnt_type" class="form-select" formControlName="apnt_type">
+                            <option value="">Select Type</option>
+                            <option value="Follow-Up">Follow-Up</option>
+                            <option value="New Visit">New Visit</option>
+                          </select>
+                          <div *ngIf="submitted && f.apnt_type.errors" class="text-danger">
+                            Type is required.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+
+                    <div class="row">
+                      <!-- Diagnosis List -->
+                      <ul class="nav no-nav-tabs mb-0" role="tablist">
+                        <li class="nav-item" style="padding: 10px;" *ngFor="let reason of appointmentReasons">
+                          <a class="nav-link text-uppercase" [id]="'tab-' + reason.ap_reasonid" role="tab"
+                            (click)="onDiagnosisClick(reason)" [attr.aria-controls]="'pane-' + reason.ap_reasonid"
+                            aria-selected="true" [ngStyle]="{
+                              'background-color': reason.ap_reason_dignscolor,
+                              color: 'black'
+                            }">
+                            {{ reason.ap_reason_shortname }} [
+                            {{
+                            reason.workingHours && reason.workingHours.length > 0
+                            ? reason.workingHours[0].noofappointment
+                            : 'N/A'
+                            }}
+                            ]
+                          </a>
+                        </li>
+                      </ul>
+
+                      <!-- Display Selected Diagnosis Card -->
+                      <div *ngFor="let reason of appointmentReasons">
+                        <div *ngIf="selectedReason?.ap_reasonid === reason.ap_reasonid" class="card mt-3"
+                          [id]="'card-' + reason.ap_reasonid">
+                          <div class="card-body">
+                            <h5 class="mb-4">You have selected {{ reason.ap_reason_name }} Reason</h5>
+
+                            <!-- Display Icons Based on Appointment Count -->
+                            <div class="row gx-4 gy-4">
+                              <div class="col-4 col-md-3 col-lg-2"
+                                *ngFor="let icon of getIconsArray(reason); let i = index">
+                                <i id="icon-{{ reason.ap_reasonid }}-{{ i }}" class="fa fa-male d-block text-center"
+                                  style="font-size: 45px; cursor: pointer;" [ngClass]="{
+                                  'text-success': !selectedIconIndexes[reason.ap_reasonid]?.includes(i),
+                                  'text-danger': selectedIconIndexes[reason.ap_reasonid]?.includes(i)
+                                }"
+                                  (click)="changeColor(i, reason, reason.workingHours[0]?.noofappointment, reason.workingHours[0]?.cwhid)">
+                                </i>
+
+                              </div>
+                            </div>
+
+                            <!-- Display Message when Icon is Selected -->
+                            <div *ngIf="slotmessage" class="mt-3">
+                              <h5>{{ slotmessage }}</h5>
+                            </div>
+
+
+                            <div *ngIf="submitted && f.selected_ap_reasonid.errors" class="text-danger">
+                              Please Select at least One Slot.
+                            </div>
+                            <!-- Hidden Field to Store Selected ap_reasonid -->
+                            <input type="text" formControlName="selected_ap_reasonid" hidden />
+                            <input type="text" formControlName="selected_cwhid" hidden />
+                            <input type="text" formControlName="selected_clinicsch_id" hidden />
+                            <input type="text" formControlName="apnt_reason_name" hidden />
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+                    <hr>
+
+
+                    <ul class="list-inline wizard d-flex justify-content-end mb-0">
+
+
+                      <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                          cdkStepperPrevious>Previous</button></li>
+                      <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                          cdkStepperNext>Next</button></li>
+                    </ul>
+                  </section>
+                </cdk-step>
+
+                <!-- end 2 wizard -->
+
+
+
+
+                <!-- third -->
+                <cdk-step [optional]="true">
+                  <ng-template cdkStepLabel>
+                    <span class="number">3.</span>
+                    <span>Review Your Details</span>
+                  </ng-template>
+                  <section *ngIf="cdkStepper.selectedIndex === 2">
+                    <div class="row">
+                      <!-- First Row -->
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Clinic Name</label>
+                        <div class="form-control-plaintext">{{ selectedClinicName }}</div>
+                      </div>
+
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Patient Name</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('patient_name')?.value }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Patient Type</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('patientType')?.value }}</div>
+                      </div>
+
+                      <!-- Second Row -->
+                      <div class="col-lg-2 col-md-6 mb-2"
+                        *ngIf="appointmentForm.get('patientType')?.value === 'Registered'">
+                        <label class="form-label">MPI Number</label>
+                        <div class="form-control-plaintext">{{ptnmpino}}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2"
+                        *ngIf="appointmentForm.get('patientType')?.value === 'Unregistered'">
+                        <label class="form-label">Nationality</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('app_nationality')?.value }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2"
+                        *ngIf="appointmentForm.get('app_nationality')?.value === 'South African' && appointmentForm.get('patientType')?.value === 'Unregistered'">
+                        <label class="form-label">ID Number</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('patient_idno')?.value }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2"
+                        *ngIf="appointmentForm.get('app_nationality')?.value === 'Non-South African'">
+                        <label class="form-label">Passport Number</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('app_passport')?.value }}</div>
+                      </div>
+
+                      <!-- Third Row -->
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Gender</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('gender')?.value }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Date of Birth</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('patient_dob')?.value | date }}</div>
+                      </div>
+                      <hr>
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Contact No</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('mobileno')?.value }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Email</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('email')?.value }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Appointment Date</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('appointment_date')?.value }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Appointment Time</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('appointment_time')?.value }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Appointment Reason</label>
+                        <div class="form-control-plaintext">{{ selectedReasonname }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Appointment Type</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('apnt_type')?.value }}</div>
+                      </div>
+
+
+
+
+                      <hr>
+                      <!-- Fourth Row -->
+
+                      <div class="col-lg-2 col-md-6 mb-2">
+                        <label class="form-label">Reminder</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('apnt_reminder')?.value }}</div>
+                      </div>
+
+                      <div class="col-lg-2 col-md-12 mb-2">
+                        <label class="form-label">Notes</label>
+                        <div class="form-control-plaintext">{{ appointmentForm.get('notes')?.value }}</div>
+                      </div>
+                    </div>
+
+
+                    <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                      <li class="previous list-inline-item"> <button type="button" class="btn btn-primary"
+                          (click)="onSubmit()">Book Appointment</button></li>
+                      <li class="previous list-inline-item" aria-disabled="true">
+                        <button class="btn btn-primary" cdkStepperPrevious>Previous</button>
+                      </li>
+                      <li class="next list-inline-item" aria-disabled="false">
+                        <button class="btn btn-primary" cdkStepperNext>Next</button>
+                      </li>
+                    </ul>
+                  </section>
+                </cdk-step>
+
+
+
+
+              </form>
+              <!-- end third wizard -->
+
+
+              <!-- start four wizard -->
+
+              <!-- <cdk-step [optional]="true">
+                  <ng-template cdkStepLabel>
+                    <span class="number">4.</span>
+                    <span>Confirm Detail</span>
+                  </ng-template>
+                  <section *ngIf="cdkStepper.selectedIndex === 3">
+                    <div class="row justify-content-center">
+                      <div class="col-lg-6">
+                        <div class="text-center">
+                          <div class="mb-4">
+                            <i class="mdi mdi-check-circle-outline text-success display-4"></i>
+                          </div>
+                          <div>
+                            <h5>Confirm Detail</h5>
+                            <p class="text-muted">If several languages coalesce, the grammar of the resulting</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <ul class="list-inline wizard d-flex justify-content-end mb-0">
+                      <li class="previous list-inline-item" aria-disabled="true"><button class="btn btn-primary"
+                          cdkStepperPrevious>Previous</button></li>
+                      <li class="next list-inline-item" aria-disabled="false"><button class="btn btn-primary"
+                          cdkStepperNext>Finish</button></li>
+                    </ul>
+                  </section>
+                </cdk-step> -->
+
+              <!-- end fourth wizrd -->
+
+            </ng-stepper>
+
+          </div>
+
+        </div>
+        <!-- end card body -->
+      </div>
+      <!-- end card -->
+    </div>
+    <!-- end col -->
+  </div>
+  <!-- end row -->
+
+</div>

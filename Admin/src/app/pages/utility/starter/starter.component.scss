@@ -1,0 +1,39 @@
+
+
+    /* Background & Centering */
+    .maintenance-img {
+        background: linear-gradient(135deg, #4f6d7a, #6c8c9d);
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Heading Styles */
+    .maintenance-img h1 {
+        font-family: 'Roboto', sans-serif;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Optional Text Styling */
+    .maintenance-img p {
+        font-size: 1.1rem;
+        color: #f8f9fa;
+        text-align: center;
+    }
+
+    /* Hover Animation on Button */
+    .maintenance-img a:hover {
+        background-color: #0056b3;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Custom Shadow for the Button */
+    .maintenance-img a {
+        background-color: #007bff;
+        color: white;
+        transition: all 0.3s ease-in-out;
+    }
+

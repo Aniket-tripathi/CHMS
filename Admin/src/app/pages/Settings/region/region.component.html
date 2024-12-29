@@ -1,0 +1,264 @@
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- <app-page-title title="List Region"></app-page-title> -->
+
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">List Region</h4>
+                        <button type="button" class="btn btn-primary btn waves-effect waves-light"
+                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-center"
+                            (click)="centerRegionModal.show()">Add Region</button>
+                    </div>
+
+
+
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="region-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="region-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div id="region-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2"
+                                        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="region-datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th (click)="onSort('clinicname')">
+                                        Clinic Name
+                                        <span *ngIf="sortColumn === 'clinicname'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('regionName')">
+                                        Region Name
+                                        <span *ngIf="sortColumn === 'regionName'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let region of filteredRegions$ | async; let i = index">
+                                <tr>
+                                    <td>{{i+1}}</td>
+                                    <td>{{ region.clinicname }}</td>
+                                    <td>{{ region.regionName }}</td>
+                                    <td>
+                                        <div>
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editregionModal" (click)="openEditModal(region)"
+                                                style="background-color: #2196F3; border-color: #2196F3; color: white;">
+                                                Edit
+                                            </button>
+
+                                            <button class="btn btn-danger btn-sm ms-2"
+                                                (click)="deleteRegion(region?.regionId)">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-controls" style="text-align: right; margin-top: 10px;">
+                        <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                            Previous
+                        </button>
+
+                        <button (click)="onPageChange(page + 1)" [disabled] class="pagination-button">
+                            Next
+                        </button>
+                    </div>
+
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div bsModal #centerRegionModal="bs-modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" role="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Add Region</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;"
+                    (click)="centerRegionModal?.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form [formGroup]="regionForm" (ngSubmit)="onSubmit()">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicName" style="font-weight: bold; color: #333;">Clinic Name <span
+                                        style="color: red;">*</span></label>
+                                <select formControlName="regionClinicId" id="regionClinicId" class="form-select"
+                                    style="border-radius: 8px; padding: 10px;">
+                                    <option value="">Select Clinic</option>
+                                    <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">{{
+                                        clinic.clinicname }}</option>
+                                </select>
+                                <div *ngIf="submitted && f.regionClinicId.errors" class="text-danger">
+                                    Clinic is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="regionName" style="font-weight: bold; color: #333;">Region
+                                    Name <span style="color: red;">*</span></label>
+                                <input type="text" id="regionName" class="form-control" formControlName="regionName"
+                                    placeholder="Enter Region Name"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.regionName.errors" class="text-danger">
+                                    Region Name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            (click)="centerRegionModal?.hide()"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;"
+                            #closeButton>
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary"
+                            style="border-radius: 8px;color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Edit Model -->
+<div class="modal fade" id="editregionModal" tabindex="-1" region="dialog" aria-labelledby="editregionModal"
+    aria-hidden="true">
+    <div class="modal-dialog" region="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Edit Region</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form #editregionForm="ngForm">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicName" style="font-weight: bold; color: #333;">Clinic Name <span
+                                        style="color: red;">*</span></label>
+                                <select class="form-control" [(ngModel)]="selectedRegion.regionClinicId"
+                                    style="border-radius: 8px; padding: 10px;" name="regionClinicId"
+                                    class="form-select">
+                                    <option disabled>Select Clinic</option>
+                                    <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">
+                                        {{ clinic.clinicname }}
+                                    </option>
+                                </select>
+                                <div *ngIf="submitted && f.regionClinicId.errors" class="text-danger">
+                                    Clinic is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="regionName" style="font-weight: bold; color: #333;">Region
+                                    Name <span style="color: red;">*</span></label>
+                                <input type="text" id="regionName" [(ngModel)]="selectedRegion.regionName"
+                                    name="regionName" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.regionName.errors" class="text-danger">
+                                    Region Name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="closeEditModalButton"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;">
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-primary" (click)="editRegion()"
+                            style="border-radius: 8px;  color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

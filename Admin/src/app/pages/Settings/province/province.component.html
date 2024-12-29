@@ -1,0 +1,256 @@
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- <app-page-title title="List Ward"></app-page-title> -->
+
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">List Province</h4>
+                        <button type="button" class="btn btn-primary btn waves-effect waves-light"
+                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-center"
+                            (click)="centerProvinceModal.show()">Add Province</button>
+                    </div>
+
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="role-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="role-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div id="role-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2"
+                                        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="province-datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th (click)="onSort('countryName')">Country Name
+                                        <span *ngIf="sortColumn === 'countryName'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('provinceName')">Province Name
+                                        <span *ngIf="sortColumn === 'provinceName'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let provincenew of filteredProvince$ | async; let i = index">
+                                <tr>
+                                    <td>{{i+1}}</td>
+                                    <td>{{ provincenew.countryName }}</td>
+                                    <td>{{ provincenew.provinceName }}</td>
+                                    <td>
+                                        <div>
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editprovinceModal" (click)="openEditModal(provincenew)"
+                                                style="background-color: #2196F3; border-color: #2196F3; color: white;">
+                                                Edit
+                                            </button>
+
+                                            <button class="btn btn-danger btn-sm ms-2"
+                                                (click)="deleteProvince(provincenew?.provinceId)">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-controls" style="text-align: right; margin-top: 10px;">
+                        <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                            Previous
+                        </button>
+
+                        <button (click)="onPageChange(page + 1)" [disabled] class="pagination-button">
+                            Next
+                        </button>
+                    </div>
+
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Model -->
+<div bsModal #centerProvinceModal="bs-modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" role="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Add Province</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;"
+                    (click)="centerProvinceModal?.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form [formGroup]="provinceForm" (ngSubmit)="onSubmit()">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="countryName" style="font-weight: bold; color: #333;">Country Name <span
+                                        style="color: red;">*</span></label>
+                                <select formControlName="countryId" id="countryId" class="form-select"
+                                    style="border-radius: 8px; padding: 10px;">
+                                    <option value="">Select Country</option>
+                                    <option *ngFor="let country of countryData" [value]="country.countryId">
+                                        {{ country.countryName }}
+                                    </option>
+
+                                </select>
+                                <div *ngIf="submitted && f.countryId.errors" class="text-danger">
+                                    Country Name is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="provinceName" style="font-weight: bold; color: #333;">Province
+                                    Name <span style="color: red;">*</span></label>
+                                <input type="text" id="provinceName" class="form-control" formControlName="provinceName"
+                                    placeholder="Enter Province Name"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.provinceName.errors" class="text-danger">
+                                    Province Name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            (click)="centerProvinceModal?.hide()"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;"
+                            #closeButton>
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary"
+                            style="border-radius: 8px; color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Model -->
+<div class="modal fade" id="editprovinceModal" tabindex="-1" province="dialog" aria-labelledby="editprovinceModal"
+    aria-hidden="true">
+    <div class="modal-dialog" province="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Edit Province</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form #editprovinceForm="ngForm">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="countryName" style="font-weight: bold; color: #333;">Country Name <span
+                                        style="color: red;">*</span></label>
+                                <select class="form-control" [(ngModel)]="selectedProvince.countryId"
+                                    style="border-radius: 8px; padding: 10px;" name="countryId" class="form-select">
+                                    <option disabled>Select Country</option>
+                                    <option *ngFor="let country of countryData" [value]="country.countryId">
+                                        {{ country.countryName }}
+                                    </option>
+
+                                </select>
+                                <div *ngIf="submitted && f.countryId.errors" class="text-danger">
+                                    Country Name is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="provinceName" style="font-weight: bold; color: #333;">Province
+                                    Name <span style="color: red;">*</span></label>
+                                <input type="text" id="provinceName" [(ngModel)]="selectedProvince.provinceName"
+                                    name="provinceName" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.provinceName.errors" class="text-danger">
+                                    Province Name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="closeEditModalButton"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;">
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-primary" (click)="editProvince()"
+                            style="border-radius: 8px;  color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

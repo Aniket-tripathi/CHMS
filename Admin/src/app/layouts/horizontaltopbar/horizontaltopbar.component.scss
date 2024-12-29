@@ -1,0 +1,23 @@
+/* For small logo (logo-sm) */
+.navbar-brand-box .logo-sm img {
+    width: 50px;
+    /* Adjust the width as needed */
+    height: auto;
+    /* Maintain aspect ratio */
+}
+
+/* For large logo (logo-lg) */
+.navbar-brand-box .logo-lg img {
+    width: 150px;
+    /* Adjust the width as needed */
+    height: 70px;
+    /* Maintain aspect ratio */
+}
+
+/* Ensure that logo doesn't stretch beyond a max width */
+.navbar-brand-box img {
+    max-width: 100%;
+    /* Ensures it resizes based on container size */
+    height: auto;
+    /* Maintain aspect ratio */
+}

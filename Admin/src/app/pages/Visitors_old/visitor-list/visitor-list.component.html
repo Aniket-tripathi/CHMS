@@ -1,0 +1,147 @@
+<div class="container-fluid">
+ <app-page-title title="View Visits" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+ <div class="row">
+     <div class="col-12">
+         <div class="card">
+             <div class="card-body">
+               
+
+
+             <div class="row">
+                <div class="col-md-10">
+                </div>
+                <div class="col-md-2" style="text-align:right;">
+                    <div class="col-12">
+                        <button type="button" [routerLink]="['/visit/add']" routerLinkActive="router-link-active"  class="btn btn-primary"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                        Add Visit 
+                    </button> 
+                </div>
+            </div>  
+            <h4 class="card-title">Visit Data Table</h4>
+
+                 <div class="row mb-md-2">
+                     <div class="col-sm-12 col-md-6">
+                         <div class="dataTables_length" id="visit-table_length">
+                             <label class="d-inline-flex align-items-center">Show
+                                 <select name="pageSize" aria-controls="visit-table" [(ngModel)]="pageSize"
+                                     class="form-control form-control-sm mx-2">
+                                     <option [ngValue]="10">10</option>
+                                     <option [ngValue]="25">25</option>
+                                     <option [ngValue]="50">50</option>
+                                     <option [ngValue]="100">100</option>
+                                 </select> entries
+                             </label>
+                         </div>
+                     </div>
+                     <div class="col-sm-12 col-md-6">
+                         <div id="visit-table_filter" class="dataTables_filter text-md-end">
+                             <label class="d-inline-flex align-items-center">Search:
+                                 <input type="text" class="form-control form-control-sm ms-2"
+                                     [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                             </label>
+                         </div>
+                     </div>
+                 </div>
+
+                 <!-- Table -->
+                 <div class="table-responsive">
+                     <table id="visit-datatable" class="table table-bordered dt-responsive nowrap">
+                         <thead>
+                             <tr>
+                                 <th>ID</th>
+                                 <th (sort)="onSort($event)">Clinic</th>
+                                 <th (sort)="onSort($event)">Visit No</th>
+                                 <th (sort)="onSort($event)">Patient Name</th>
+                                 <th  (sort)="onSort($event)">Phone</th>
+                                 <th  (sort)="onSort($event)">Email</th>
+                                 <th>Actions</th>
+                             </tr>
+                         </thead>
+                         <tbody *ngFor="let visit of filteredVisits$ | async; let i = index">
+                             <tr>
+                                 <td>{{ i + 1 }}</td>
+                                 <td>{{ visit.clinicname }}</td>
+                                 <td>{{ visit.visit_no }}</td>
+                                 <td>{{ visit.fullname  }}</td>
+                                 <td>{{ visit.patientpno }}</td>
+                                 <td>{{ visit.patientemail }}</td>
+                                 <td>
+                                     <div
+                                         style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                                         <button [routerLink]="['/visit/view', visit.vid]" title="Visitors View"
+                                             style="background: none; border: none; cursor: pointer; color: #007bff; font-size: 16px;">
+                                             <i class="fas fa-eye"></i>
+                                         </button>
+                                       
+                                     </div>
+                                 </td>
+                             </tr>
+                             <!-- <tr *ngIf="!hideme[i]" class="sub-table no-bg">
+                                 <td align="center"></td>
+                                 <td colspan="5" class="p-0">
+                                     <table class="table mb-0 table-striped">
+                                         <thead class="bg-dark text-white">
+                                             <tr>
+                                                 <th>Country Name</th>
+                                                 <th>clinicCode</th>
+                                                 <th>Sales Account</th>
+                                                 <th>Clinic Code</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody>
+                                             <tr *ngFor="let clinic of filteredClinics$ | async">
+                                                 <td>{{ clinic.clinicName }}</td>
+                                                 <td>{{ clinic.clinicContactNo }}</td>
+                                                 <td>{{ clinic.clinicEmail }}</td>
+                                                 <td>{{ clinic.clinicCode }}</td>
+                                             </tr>
+                                         </tbody>
+                                     </table>
+                                 </td>
+                             </tr> -->
+                         </tbody>
+                     </table>
+                 </div>
+
+                 <!-- Pagination -->
+                 <div class="pagination-controls" style="text-align: right; margin-top: 10px;">
+                     <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                         Previous
+                     </button>
+
+                     <button (click)="onPageChange(page + 1)" [disabled]="page * pageSize >= totalVisits"
+                         class="pagination-button">
+                         Next
+                     </button>
+                 </div>
+
+                 <style>
+                     .pagination-button {
+                         padding: 5px 10px;
+                         font-size: 12px;
+                         background-color: #f1f1f1;
+                         color: #333;
+                         border: 1px solid #ddd;
+                         border-radius: 3px;
+                         cursor: pointer;
+                         margin-right: 5px;
+                         transition: border-color 0.3s, background-color 0.3s;
+                     }
+
+                     .pagination-button:hover {
+                         border-color: #007bff;
+                         background-color: #f9f9f9;
+                     }
+
+                     .pagination-button:disabled {
+                         cursor: not-allowed;
+                         opacity: 0.6;
+                     }
+                 </style>
+
+             </div>
+         </div>
+     </div>
+ </div>
+</div>

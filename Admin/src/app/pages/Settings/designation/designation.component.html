@@ -1,0 +1,283 @@
+<div class="container-fluid">
+
+    <!-- <app-page-title title="View Clinics" [breadcrumbItems]="breadCrumbItems"></app-page-title> -->
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title">List Designation</h4> <button type="button"
+                            class="btn btn-primary btn waves-effect waves-light" data-bs-toggle="modal"
+                            data-bs-target=".bs-example-modal-center" (click)="centerRoleModal.show()">Add
+                            Designation</button>
+
+                    </div>
+
+
+
+
+
+
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="role-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="role-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div id="role-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2"
+                                        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="designation-datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th (click)="onSort('clinicname')">
+                                        Clinic Name
+                                        <span *ngIf="sortColumn === 'clinicname'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('designation')">
+                                        Name
+                                        <span *ngIf="sortColumn === 'designation'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let designations of filteredDesignations$ | async; let i = index">
+                                <tr>
+                                    <td>{{i+1}}</td>
+                                    <td>{{ designations.clinicname }}</td>
+                                    <td>{{ designations.designation}}</td>
+
+                                    <td>
+                                        <div>
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editdesignationModal"
+                                                (click)="openEditModal(designations)"
+                                                style="background-color: #2196F3; border-color: #2196F3; color: white;">
+                                                Edit
+                                            </button>
+
+                                            <button class="btn btn-danger btn-sm ms-2"
+                                                (click)="deleteDesignation(designations?.id)">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-controls" style="text-align: right; margin-top: 10px;">
+                        <!-- <span>Total Roles: {{ totalRoles }}</span> -->
+                        <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                            Previous
+                        </button>
+
+                        <button (click)="onPageChange(page + 1)" [disabled] class="pagination-button">
+                            Next
+                        </button>
+                    </div>
+
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+
+
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+<!-- add modal -->
+
+
+<div bsModal #centerRoleModal="bs-modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" role="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Add Designation</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;"
+                    (click)="centerRoleModal?.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form [formGroup]="designationForm" (ngSubmit)="onSubmit()">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicName" style="font-weight: bold; color: #333;">Select Clinic <span
+                                        style="color: red;">*</span></label>
+                                <select formControlName="clinic_id" id="clinic_id" class="form-select"
+                                    style="border-radius: 8px; padding: 10px;">
+                                    <option value="">Select Clinic</option>
+                                    <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">{{
+                                        clinic.clinicname }}</option>
+                                </select>
+                                <div *ngIf="submitted && f.clinic_id.errors" class="text-danger">
+                                    Clinic is required.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="designation" style="font-weight: bold; color: #333;">Designation
+                                    Name<span style="color: red;">*</span></label>
+                                <input type="text" id="designation" class="form-control" formControlName="designation"
+                                    placeholder="Enter Designation Name"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.designation.errors" class="text-danger">
+                                    Designation Name is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            (click)="centerRoleModal?.hide()"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;"
+                            #closeButton>
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary"
+                            style="border-radius: 8px;  color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Model -->
+<div class="modal fade" id="editdesignationModal" tabindex="-1" designation="dialog"
+    aria-labelledby="editdesignationModal" aria-hidden="true">
+    <div class="modal-dialog" designation="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Edit Designation</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form #editdesignationForm="ngForm">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicName" style="font-weight: bold; color: #333;">Select Clinic <span
+                                        style="color: red;">*</span> </label>
+                                <select class="form-control" [(ngModel)]="selectedDesignation.clinic_id"
+                                    style="border-radius: 8px; padding: 10px;" name="clinic_id" class="form-select">
+                                    <option disabled>Select Clinic</option>
+                                    <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">
+                                        {{ clinic.clinicname }}
+                                    </option>
+                                </select>
+                                <div *ngIf="submitted && f.clinic_id.errors" class="text-danger">
+                                    Clinic is required.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="designation" style="font-weight: bold; color: #333;">Designation
+                                    Name<span style="color: red;">*</span></label>
+                                <input type="text" id="designation" [(ngModel)]="selectedDesignation.designation"
+                                    name="designation" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.designation.errors" class="text-danger">
+                                    Designation Name is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="closeEditModalButton"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;">
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-primary" (click)="editDesignation()"
+                            style="border-radius: 8px;  color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,227 @@
+<div class="card">
+  <div class="card-body">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h4 class="card-title mb-4" style="margin: 0;">Patient View</h4>
+    </div>
+    <div class="row">
+      <!-- Patient Information Section -->
+      <div class="col-xl-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="fw-semibold">Patient Information</h5>
+
+            <div class="table-responsive">
+              <table class="table">
+                <tbody>
+                  <!-- Clinic Information -->
+                  <tr>
+                    <th scope="row">Clinic Name</th>
+                    <td>{{ patientData?.patients?.clinicname }}</td>
+                  </tr>
+                  <!-- <tr>
+                    <th scope="row">Clinic ID</th>
+                    <td>{{ patientData?.patients?.clinicid }}</td>
+                  </tr> -->
+                  <tr>
+                    <th scope="row">Mpi No.</th>
+                    <td>{{ patientData?.patients?.mpino }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Old File No.</th>
+                    <td>{{ patientData?.patients?.oldfileno }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">File No.</th>
+                    <td>{{ patientData?.patients?.fileno }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Title</th>
+                    <td>{{ patientData?.patients?.title }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Age</th>
+                    <td>{{ patientData?.patients?.agep }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Guardian Mpi No.</th>
+                    <td>{{ patientData?.patients?.guardian_mpino }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Full Name</th>
+                    <td>{{ patientData?.patients?.fullname }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">ID Number</th>
+                    <td>{{ patientData?.patients?.idnumber }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Date of Birth</th>
+                    <td>{{ patientData?.patients?.dob }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Passport No.</th>
+                    <td>{{ patientData?.patients?.passportno }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Expiry Date</th>
+                    <td>{{ patientData?.patients?.expdt }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Gender</th>
+                    <td>{{ patientData?.patients?.gender }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Race</th>
+                    <td>{{ patientData?.patients?.race }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Language</th>
+                    <td>{{ patientData?.patients?.language }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Marital Status</th>
+                    <td>{{ patientData?.patients?.maritalstatus }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Citizenship</th>
+                    <td>{{ patientData?.patients?.citizenship }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Religion</th>
+                    <td>{{ patientData?.patients?.religion }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Patient Category</th>
+                    <td>{{ patientData?.patients?.patient_category }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Address</th>
+                    <td>{{ patientData?.patients?.bill_address }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Suburb</th>
+                    <td>{{ patientData?.patients?.bill_suburd }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">City</th>
+                    <td>{{ patientData?.patients?.bill_city }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Area Code</th>
+                    <td>{{ patientData?.patients?.bill_areacode }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Region</th>
+                    <td>{{ patientData?.patients?.bill_region }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Ward</th>
+                    <td>{{ patientData?.patients?.bill_ward }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Phone Number</th>
+                    <td>{{ patientData?.patients?.patientpno }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Nationality</th>
+                    <td>{{ patientData?.patients?.nationality }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Classification</th>
+                    <td>{{ patientData?.patients?.classification_name }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Email</th>
+                    <td>{{ patientData?.patients?.patientemail }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Extra Info</th>
+                    <td>{{ patientData?.patients?.patientextra }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Status</th>
+                    <td>{{ patientData?.patients?.status }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Added Date</th>
+                    <td>{{ patientData?.patients?.addate }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Added Time</th>
+                    <td>{{ patientData?.patients?.addtime }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div><!--end col-->
+
+      <!-- Patient Additional Details Section -->
+      <div class="col-xl-9">
+        <div class="card">
+          <div class="card-body border-bottom">
+            <div class="d-flex">
+              <!-- <img src="assets/images/companies/wechat.svg" alt="" height="50"> -->
+              <div class="flex-grow-1 ms-3">
+                <h5 class="fw-semibold">{{ patientData?.patients?.fullname }} - {{ patientData?.patients?.mpino }}</h5>
+                <ul class="list-unstyled hstack gap-2 mb-0">
+                  <li>
+                    <i class="bx bx-building-house"></i> <span class="text-muted">{{ patientData?.patients?.clinicname }}</span>
+                  </li>
+                  <li>
+                    <i class="bx bx-map"></i> <span class="text-muted">{{ patientData?.patients?.bill_city }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description Section -->
+          <div class="card-body">
+            <h5 class="fw-semibold mb-3">Next of Kin:</h5>
+            <ul class="vstack gap-3">
+              <li *ngIf="kinDetail?.length">
+                <b>Name:</b> {{ kinDetail[0]?.name }} {{ kinDetail[0]?.last_name }}
+              </li>
+              <li *ngIf="kinDetail?.length">
+                <b>Contact:</b> {{ kinDetail[0]?.contact_number }}
+              </li>
+            </ul>
+          
+            <h5 class="fw-semibold mb-3">Medical Fund Information:</h5>
+            <ul class="vstack gap-3">
+              <li>
+                <b>Medical Fund Name:</b> {{ patientData?.patients[0]?.medicalfundname }}
+              </li>
+              <li>
+                <b>Medical Fund No:</b> {{ patientData?.patients[0]?.medicalfundno }}
+              </li>
+            </ul>
+          
+            <h5 class="fw-semibold mb-3">Employment Information:</h5>
+            <ul class="vstack gap-3">
+              <li>
+                <b>Status:</b> {{ patientData?.patients[0]?.pempstatus }}
+              </li>
+              <li>
+                <b>Employer:</b> {{ patientData?.patients[0]?.pemployer }}
+              </li>
+              <li>
+                <b>Address:</b> {{ patientData?.patients[0]?.pempaddress }}, {{ patientData?.patients[0]?.pempcity }}
+              </li>
+              <li>
+                <b>Contact:</b> {{ patientData?.patients[0]?.pempcontact }}
+              </li>
+            </ul>
+          
+            <div class="mt-4">
+              <a href="javascript:void(0);" class="btn btn-soft-primary btn-hover w-100 rounded"><i class="mdi mdi-eye"></i> View Full Profile</a>
+            </div>
+          </div>
+          
+        </div>
+      </div><!--end col-->
+    </div><!--end row-->
+  </div>
+</div>

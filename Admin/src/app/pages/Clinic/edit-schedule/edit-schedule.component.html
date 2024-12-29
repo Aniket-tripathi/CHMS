@@ -1,0 +1,217 @@
+<div class="card">
+    <div class="card-body">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h4 class="card-title mb-4" style="margin: 0;">Clinic Schedule</h4>
+        <button type="button" [routerLink]="['/clinic/schedule']" routerLinkActive="router-link-active"
+        class="btn btn-primary"
+        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Add Schedule</button>
+      </div>
+  
+      <form [formGroup]="editscheduleForm">
+        <div class="row align-items-end">
+          <div class="col-md-3 col-sm-6">
+            <div class="mb-3"><input type="hidden" class="form-control" id="clinicid" formControlName="clinicid">
+              <label for="clinicName" style="font-weight: bold; color: #333;">Clinic<span class="text-danger">*</span></label>
+              <!-- <select formControlName="clinicid" id="clinicid" class="form-control" style="border-radius: 8px; padding: 10px;">
+                <option disabled selected>Select Clinic</option>
+                <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">{{ clinic.clinicname }}</option>
+              </select> -->
+              
+              <input type="text" class="form-control" id="clinicname" formControlName="clinicname" readonly>
+
+              <div *ngIf="submitted && f.clinicid.errors" class="text-danger" style="min-height: 1.5em;">
+                Clinic is required.
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="mb-3">
+              <label for="month" style="font-weight: bold; color: #333;">Month<span class="text-danger">*</span></label>
+              <input type="month" class="form-control" id="month" formControlName="month"  [min]="minMonth">
+              <div *ngIf="submitted && f.month.errors" class="text-danger" style="min-height: 1.5em;">
+                Month is required.
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="mb-3">
+              <label for="noofappointment" style="font-weight: bold; color: #333;">Appointments Slots<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" autocomplete="off" formControlName="apsolts" id="apsolts" maxlength="5" 
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57" required>
+              <div *ngIf="submitted && f.apsolts.errors" class="text-danger" style="min-height: 1.5em;">
+                Slot is required.
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6" style="margin-top:5px">
+            <div class="mb-3">
+            <button type="submit" class="btn btn-primary mt-4">Submit</button>
+          </div>
+          </div>
+        </div>
+      </form>
+  
+  
+  <hr>
+      <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                   
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                       
+                      
+                    </div>
+  
+                 
+  
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="role-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="role-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div id="role-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2"
+                                        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+  
+                    <!-- Table -->
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-hover table-striped align-middle">
+                        <thead class="table-light text-center sticky-top">
+                          <tr>
+                            <th>Days</th>
+                            <th (click)="onSort('timeSlots')" class="sortable">
+                              Time Slot
+                              <span *ngIf="sortColumn === 'timeSlots'">
+                                <i class="fa"
+                                   [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}">
+                                </i>
+                              </span>
+                            </th>
+                            <th  [ngStyle]="{
+                              'background-color': reason.appreasoncolor}"*ngFor="let reason of scheduleData[0]?.timeSlots[0]?.reasons" class="text-center">
+                              <span [ngStyle]="{
+                                'color': '#37474f',
+                                'padding': '4px 8px',
+                                'border-radius': '8px',
+                                'font-size': '0.85rem'
+                              }">
+                                {{ reason.appreasonName }}
+                              </span>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <ng-container *ngFor="let schedule of filteredSchedule$ | async">
+                            <tr *ngFor="let slot of schedule.timeSlots; let first = first">
+                              <!-- Row for Dates -->
+                              <td *ngIf="first" [attr.rowspan]="schedule.timeSlots.length" class="fw-bold text-center bg-light">
+                                {{ schedule.date }}
+                              </td>
+                              
+                              <!-- Time Slot Inputs -->
+                              <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                  <input
+                                    type="time"
+                                    class="form-control form-control-sm mx-2"
+                                    [(ngModel)]="slot.timeFrom"
+                                    (change)="onTimeChange($event, schedule.date, 'from', slot)"
+                                    [value]="slot.timeFrom"
+                                  />
+                                  <span class="mx-2">-</span>
+                                  <input
+                                    type="time"
+                                    class="form-control form-control-sm mx-2"
+                                    [(ngModel)]="slot.timeTo"
+                                    (change)="onTimeChange($event, schedule.date, 'to', slot)"
+                                    [value]="slot.timeTo"
+                                  />
+                                </div>
+                              </td>
+                        
+                              <!-- Appointment Count Inputs -->
+                              <td *ngFor="let reason of slot.reasons" class="text-center">
+                                <input
+                                  type="text"
+                                  class="form-control form-control-sm mx-auto"
+                                  style="max-width: 80px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #ddd;"
+                                  [value]="reason.appointmentCount"
+                                  (input)="onAppointmentChange($event,reason.appreasonId)"
+                                />
+                              </td>
+                            </tr>
+                          </ng-container>
+                        </tbody>
+                        
+                      </table>
+                    </div>
+                    
+                    
+  
+                   
+                    <!-- Pagination Controls -->
+            <div class="pagination-controls" style="text-align: right; margin-top: 10px;">
+              <span><b>Total Schedules: {{ counttotaldata }}</b></span><br>
+              <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                Previous
+              </button>
+
+              <button
+                (click)="onPageChange(page + 1)"
+                [disabled]="page * pageSize >= totalSchedules"
+                class="pagination-button"
+              >
+                Next
+              </button>
+            </div>
+  
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+  
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+  
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+  
+  
+  
+                </div>
+            </div>
+  
+        </div>
+  
+    </div>
+    </div>
+  </div>

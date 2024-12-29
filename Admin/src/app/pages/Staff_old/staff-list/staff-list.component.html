@@ -1,0 +1,144 @@
+<div class="container-fluid">
+    <app-page-title title="View staffs" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Staffs Table</h4>
+
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="staff-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="staff-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div id="staff-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="staff-datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th (click)="onSort('id')">ID</th>
+                                    <th (click)="onSort('username')">Staff Name</th>
+                                    <th (click)="onSort('clinicname')">Clinic Name</th>
+                                    <th (click)="onSort('email')">Email</th>
+                                    <th (click)="onSort('qualification')">Qualification</th>
+                                    <th (click)="onSort('adddate')">Joining Date</th>
+                                    <th (click)="onSort('staffType')">Staff Type</th>
+                                    <th (click)="onSort('contactno')">Contact</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let staff of filteredstaff$ | async; let i = index">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ staff.username }}</td>
+                                    <td>{{ staff.clinicname }}</td>
+                                    <td>{{ staff.email }}</td>
+                                    <td>{{ staff.qualification }}</td>
+                                    <td>{{ staff.adddate }}</td>
+                                    <td>{{ staff.staffType }}</td>
+                                    <td>{{ staff.contactno }}</td>
+                                    <td>
+                                        <div
+                                            style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                                            <!-- Edit Button -->
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editClinicModal" (click)="openEditModal(staff)"
+                                                style="background-color: #007BFF; border-color: #007BFF; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                                Edit
+                                            </button>
+
+                                            <!-- View Details Button -->
+                                            <button class="btn btn-secondary btn-sm" (click)="viewDetails(staff.id)"
+                                                style="background-color: #6C757D; border-color: #6C757D; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+
+                                            <!-- Status Toggle -->
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                    [id]="'switch-' + staff.id" [checked]="staff.status === 'active'"
+                                                    [ngClass]="staff.status === 'active' ? 'bg-success' : 'bg-muted'"
+                                                    (change)="handleStatusChange(staff, $event)"
+                                                    [style.background-color]="staff.status === 'active' ? '#28A745' : '#DEE2E6'" />
+
+                                                <label [for]="'switch-' + staff.id" class="ms-2" [ngStyle]="{
+                                              'min-width': '80px',
+                                              'text-align': 'center',
+                                              'border-radius': '5px',
+                                              'padding': '3px 10px',
+                                              'color': 'white',
+                                              'background-color': staff.status === 'active' ? '#28A745' : '#6C757D',
+                                              'box-shadow': '0 2px 4px rgba(0, 0, 0, 0.1)'
+                                            }">
+                                                    {{ staff.status === 'active' ? 'Active' : 'Inactive' }}
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mb-3 d-flex justify-content-between">
+                        <!-- <span>Total Clinics: {{ totalStaffs }}</span> -->
+
+                        <!-- Pagination Controls -->
+                        <div class="pagination-controls" style="text-align: right;">
+                            <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                                Previous
+                            </button>
+                            <button (click)="onPageChange(page + 1)" [disabled]="page * pageSize >= totalStaffs"
+                                class="pagination-button">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

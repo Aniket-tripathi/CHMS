@@ -1,0 +1,353 @@
+<div class="container-fluid">
+    <app-page-title title="View Clinics" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body" *ngIf="role == 'superadmin'">
+                    <h4 class="card-title">Clinics Table</h4>
+
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="clinic-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="clinic-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div id="clinic-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2"
+                                        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="clinic-datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th (click)="onSort('clinicid')">
+                                        ID
+                                        <span *ngIf="sortColumn === 'clinicid'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('clinicname')">
+                                        Clinic Name
+                                        <span *ngIf="sortColumn === 'clinicname'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('cliniccode')">
+                                        Code
+                                        <span *ngIf="sortColumn === 'cliniccode'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('clinicPhone')">
+                                        Phone
+                                        <span *ngIf="sortColumn === 'clinicPhone'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('clinicEmail')">
+                                        Email
+                                        <span *ngIf="sortColumn === 'clinicEmail'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th>
+                                        plan
+
+                                    </th>
+                                    <th>
+                                        No.of staff
+
+                                    </th>
+                                    <th>
+                                        No.of patients
+
+                                    </th>
+                                    <th (click)="onSort('')">
+                                        Last Activity
+
+                                    </th>
+                                    <th (click)="onSort('ClinicWardId')">
+                                        Date
+                                        <span *ngIf="sortColumn === 'ClinicWardId'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+
+                            </thead>
+                            <tbody *ngFor="let clinic of filteredClinics$ | async; let i = index">
+                                <tr>
+                                    <td>{{ i + 1 }}</td>
+                                    <!-- <td>{{ clinic.clinicid }}</td> -->
+                                    <td>{{ clinic.clinicname }}</td>
+                                    <td>{{ clinic.cliniccode }}</td>
+                                    <td>{{ clinic.clinicContactNo }}</td>
+                                    <td>{{ clinic.clinicEmail }}</td>
+                                    <td>{{ clinic.clinicplan }}</td>
+                                    <td>{{ totalStaff }}</td>
+                                    <td>{{ totalPatient }}</td>
+                                    <td>login</td>
+                                    <td>{{ clinic.clinicAddDate }}</td>
+                                    <td>
+                                        <div
+                                            style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                                            <!-- Edit Button -->
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editClinicModal" (click)="openEditModal(clinic)"
+                                                style="background-color: #2196F3; border-color: #2196F3; color: white;">
+                                                Edit
+                                            </button>
+
+                                            <!-- Status Switch and Label -->
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                    [id]="'switch-' + clinic.clinicid"
+                                                    [checked]="clinic.clinicStatus === 'active'"
+                                                    [ngClass]="clinic.clinicStatus === 'active' ? 'bg-success' : 'bg-muted'"
+                                                    (change)="handleStatusChange(clinic, $event)"
+                                                    [style.background-color]="clinic.clinicStatus === 'active' ? '#81C784' : '#CFD8DC'" />
+
+                                                <label [for]="'switch-' + clinic.clinicid" class="ms-2" [ngStyle]="{
+                                                    'min-width': '80px',
+                                                    'text-align': 'center',
+                                                    'border-radius': '5px',
+                                                    'padding': '3px 10px',
+                                                    'color': 'white',
+                                                    'background-color': clinic.clinicStatus === 'active' ? '#4CAF50' : '#607D8B',
+                                                    'box-shadow': '0 2px 4px rgba(0, 0, 0, 0.1)'
+                                                  }">
+                                                    {{ clinic.clinicStatus === 'active' ? 'Active' : 'Inactive' }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mb-3 d-flex justify-content-between">
+                        <span>Total Clinics: {{ totalClinics }}</span>
+
+                        <!-- Pagination Controls -->
+                        <div class="pagination-controls" style="text-align: right;">
+                            <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                                Previous
+                            </button>
+
+                            <button (click)="onPageChange(page + 1)" [disabled]="page * pageSize >= totalClinics"
+                                class="pagination-button">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+
+                </div>
+                <div class="card-body" *ngIf="role !== 'superadmin'">
+                    <div
+                        style="padding: 20px; margin: 20px 0; border-radius: 5px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-left: 5px solid #f44336; font-family: Arial, sans-serif; font-size: 16px;">
+                        <strong>Security Notice!</strong> This is a confidential Clinic list. To ensure
+                        the privacy and security of our team, this information is restricted. If you are a staff member,
+                        you will not have access to this list for security purposes.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Clinic Modal -->
+<div class="modal fade" id="editClinicModal" tabindex="-1" role="dialog" aria-labelledby="editClinicModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" id="editClinicModalLabel" style="font-size: 1.2rem;">Edit Clinic</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form #editClinicForm="ngForm">
+                    <!-- Row 1: Clinic Name and Code -->
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicname" style="font-weight: bold; color: #333;">Clinic Name</label>
+                                <input type="text" id="clinicname" [(ngModel)]="selectedClinic.clinicname"
+                                    name="clinicname" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cliniccode" style="font-weight: bold; color: #333;">Clinic Code</label>
+                                <input type="text" id="cliniccode" [(ngModel)]="selectedClinic.cliniccode"
+                                    name="cliniccode" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Contact Number, Email, and Services -->
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="clinicContactNo" style="font-weight: bold; color: #333;">Contact
+                                    Number</label>
+                                <input type="text" id="clinicContactNo" [(ngModel)]="selectedClinic.clinicContactNo"
+                                    name="clinicContactNo" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="clinicEmail" style="font-weight: bold; color: #333;">Email</label>
+                                <input type="email" id="clinicEmail" [(ngModel)]="selectedClinic.clinicEmail"
+                                    name="clinicEmail" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="services" style="font-weight: bold; color: #333;">Services</label>
+                                <input type="text" id="services" [(ngModel)]="selectedClinic.services" name="services"
+                                    class="form-control"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Logo, Region, and Ward -->
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="clinicLogo" style="font-weight: bold; color: #333;">Logo</label>
+                                <input type="file" class="form-control" id="clinicLogo"
+                                    [(ngModel)]="selectedClinic.clinicLogo" name="clinicLogo"
+                                    style="border-radius: 8px; padding: 10px;" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="clinicRegionId" style="font-weight: bold; color: #333;">Region</label>
+                                <select id="clinicRegionId" class="form-control"
+                                    [(ngModel)]="selectedClinic.clinicRegionId" name="clinicRegionId"
+                                    style="border-radius: 8px; padding: 10px;">
+                                    <option value="" disabled selected>Choose...</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="ClinicWardId" style="font-weight: bold; color: #333;">Ward</label>
+                                <select id="ClinicWardId" class="form-control" [(ngModel)]="selectedClinic.ClinicWardId"
+                                    name="ClinicWardId" style="border-radius: 8px; padding: 10px;">
+                                    <option value="" disabled selected>Choose...</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Address and Comments -->
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicAddress" style="font-weight: bold; color: #333;">Address</label>
+                                <textarea id="clinicAddress" [(ngModel)]="selectedClinic.clinicAddress"
+                                    name="clinicAddress" class="form-control"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="comments" style="font-weight: bold; color: #333;">Comments</label>
+                                <textarea class="form-control" id="comments" [(ngModel)]="selectedClinic.comments"
+                                    name="comments" placeholder="comments"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="ClinicWardId" style="font-weight: bold; color: #333;">Subscription Plan</label>
+                            <select id="clinicplan" class="form-control" [(ngModel)]="selectedClinic.clinicplan"
+                                name="clinicplan" style="border-radius: 8px; padding: 10px;">
+                                <option value="" disabled selected>Choose...</option>
+                                <option value="Basic">Basic</option>
+                                <option value="Premium">Premium</option>
+                                <option value="Enterprise">Enterprise</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" id="closeEditModalButton"
+                    style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;">
+                    <span aria-hidden="true">Close</span>
+                </button>
+                <button type="button" class="btn btn-primary" (click)="saveClinic()"
+                    style="border-radius: 8px; background-color: #338250; color: white; padding: 10px 20px; border: none;">
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

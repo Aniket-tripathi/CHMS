@@ -1,0 +1,332 @@
+<div class="container-fluid">
+    <app-page-title title="View Appointments" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                        </div>
+                        <div class="col-md-2" style="text-align:right;">
+                            <!-- Calendar Button with Icon -->
+                            <button type="button" [routerLink]="['/calendar']" routerLinkActive="router-link-active"
+                                class="btn btn-primary" 
+                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin-right: 10px;">
+                                <i class="fa fa-calendar" style="margin-right: 5px;"></i>  <!-- Calendar icon -->
+                                Calendar
+                            </button>
+                        
+                            <!-- Add Appointment Button -->
+                            <button type="button" [routerLink]="['/addappointment']" routerLinkActive="router-link-active"
+                                class="btn btn-primary" 
+                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                Add Appointment
+                            </button>
+                        </div>
+                        
+                    </div> 
+                    <h4 class="card-title">Appointments</h4>
+
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="clinic-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="clinic-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div id="clinic-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2"
+                                        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="appointment-datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th (click)="onSort('apnt_clinicid')">
+                                        Clinic
+                                        <span *ngIf="sortColumn === 'apnt_clinicid'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('appointment_no')">
+                                        Appointment No.
+                                        <span *ngIf="sortColumn === 'appointment_no'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('patient_name')">
+                                       Patient Name
+                                        <span *ngIf="sortColumn === 'patient_name'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('patient_mpi')">
+                                        Patient MPI No.
+                                        <span *ngIf="sortColumn === 'patient_mpi'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('appointment_date')">
+                                        Date
+                                        <span *ngIf="sortColumn === 'appointment_date'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('appointment_time')">
+                                        Clinic Schedule
+                                        <span *ngIf="sortColumn === 'appointment_time'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('apt_reason_id')">
+                                       Appointment Reason
+                                        <span *ngIf="sortColumn === 'apt_reason_id'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th (click)="onSort('appointment_status')">
+                                       Status
+                                        <span *ngIf="sortColumn === 'appointment_status'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+
+                            </thead>
+                            <tbody *ngFor="let App of filteredAppointments$ | async; let i = index">
+                                <tr>
+                                    <td>{{i+1}}</td>
+                                    <td>{{ App.clinicname }}</td>
+                                    <td>{{ App.appointment_no }}</td>
+                                    <td>{{ App.patient_name }}</td>
+                                    <td>
+                                        <span *ngIf="!App.mpino" [ngStyle]="{'background-color': '#ff5252', 'border-radius': '5px', 'padding': '0.35em 0.6em','color': '#fff'}">
+                                          Unregistered
+                                        </span>
+                                        <span *ngIf="App.mpino">
+                                          {{ App.mpino }}
+                                        </span>
+                                      </td>
+                                      
+                                      
+                                    <td>{{ App.appointment_date }}</td>
+                                    <td>{{ App.appointment_time }}</td>
+                                   
+                                        <td>
+                                            <span [ngStyle]="{'background-color': App.ap_reason_dignscolor, 'border-radius': '5px', 'padding': '0.35em 0.6em'}">
+                                                {{ App.ap_reason_name }}
+                                              </span>
+                                              
+                                          </td>
+                                     
+                                      
+                                    <td>{{ App.appointment_status }}</td>
+                                    <td>
+                                        <div>
+                                        <button class="btn btn-primary btn-sm" 
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#viewModal"   (click)="openViewModal(App)"
+                                        style="background-color: #2196F3; border-color: #2196F3; color: white;">
+                                        <i class="fas fa-eye"></i>
+                                      </button>
+                                        
+                                        <button class="btn btn-danger btn-sm ms-2">
+                                        Delete
+                                        </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mb-3 d-flex justify-content-between">
+                        <span>Total Appointments: {{ totalAppointments }}</span>
+
+                        <!-- Pagination Controls -->
+                        <div class="pagination-controls" style="text-align: right;">
+                            <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                                Previous
+                            </button>
+
+                            <button (click)="onPageChange(page + 1)" [disabled]="page * pageSize >= totalAppointments"
+                                class="pagination-button">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- view modal  -->
+
+<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content shadow-lg" style="border-radius: 12px;">
+            <!-- Modal Header -->
+            <div class="modal-header bg-primary text-white" style="border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" id="viewModalLabel">View Appointment Details</h5>
+                <button type="button" class="btn-close btn-light" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-6 mb-3">
+                            <table class="table table-striped table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Clinic</th>
+                                        <td>{{ selectedAppointment.clinicname }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Patient Name</th>
+                                        <td>{{ selectedAppointment.patient_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Nationality</th>
+                                        <td>{{ selectedAppointment.app_nationality }}</td>
+                                    </tr>
+                                    <tr *ngIf="selectedAppointment.patient_idno">
+                                        <th scope="row">Patient ID Number</th>
+                                        <td>{{ selectedAppointment.patient_idno }}</td>
+                                    </tr>
+                                    <tr  *ngIf="selectedAppointment.app_passport">
+                                        <th scope="row">Passport Number</th>
+                                        <td>{{ selectedAppointment.app_passport }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Patient Email</th>
+                                        <td>{{ selectedAppointment.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Patient MPI No</th>
+                                        <td>{{ selectedAppointment.mpino || 'Unregistered' }}</td>
+                                    </tr>
+
+                                  
+                                    
+                                    <tr>
+                                        <th scope="row">Patient Gender</th>
+                                        <td>{{ selectedAppointment.gender }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Patient Contact</th>
+                                        <td>{{ selectedAppointment.mobileno }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th scope="row">Date Of Birth</th>
+                                        <td>{{ selectedAppointment.patient_dob }}</td>
+                                    </tr>
+                                   
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6 mb-3">
+                            <table class="table table-striped table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Appointment No</th>
+                                        <td>{{ selectedAppointment.appointment_no }}</td>
+                                    </tr>
+                                  
+                                    <tr>
+                                        <th scope="row">Appointment Date</th>
+                                        <td>{{ selectedAppointment.appointment_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Appointment Reason</th>
+                                        <td>{{ selectedAppointment.ap_reason_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Clinic Schedules</th>
+                                        <td>{{ selectedAppointment.appointment_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Reminder</th>
+                                        <td>{{ selectedAppointment.apnt_reminder || 'NA' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Notes</th>
+                                        <td>{{ selectedAppointment.notes  || 'No notes available'}}</td>
+                                    </tr>
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer d-flex justify-content-end">
+                <button type="button" class="btn btn-warning btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

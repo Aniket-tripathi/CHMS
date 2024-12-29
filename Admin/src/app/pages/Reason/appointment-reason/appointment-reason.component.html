@@ -1,0 +1,356 @@
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- <app-page-title title="List Ward"></app-page-title> -->
+
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">List Appointment Reason</h4>
+                        <!-- <button type="button" class="btn btn-primary btn waves-effect waves-light"
+                            data-bs-toggle="modal" data-bs-target="#openappointmentModal" (click)="openModal()">Add
+                            Appointment Reason</button> -->
+
+                        <button type="button" class="btn btn-primary btn waves-effect waves-light"
+                            data-bs-toggle="modal" data-bs-target=".bs-example-modal-center"
+                            (click)="centerAppointmentModal.show()">Add
+                            Appointment Reason</button>
+                    </div>
+
+                    <div class="row mb-md-2">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="role-table_length">
+                                <label class="d-inline-flex align-items-center">Show
+                                    <select name="pageSize" aria-controls="role-table" [(ngModel)]="pageSize"
+                                        class="form-control form-control-sm mx-2">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select> entries
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div id="role-table_filter" class="dataTables_filter text-md-end">
+                                <label class="d-inline-flex align-items-center">Search:
+                                    <input type="text" class="form-control form-control-sm ms-2"
+                                        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="appointment-datatable" class="table table-bordered dt-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th (click)="onSort('ap_reason_name')">Appointment Reason Name
+                                        <span *ngIf="sortColumn === 'ap_reason_name'">
+                                            <i class="fa"
+                                                [ngClass]="{'fa-arrow-up': sortDirection === 'asc', 'fa-arrow-down': sortDirection === 'desc'}"></i>
+                                        </span>
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody *ngFor="let appointmentreason of filteredAppointmentreason$ | async; let i = index">
+                                <tr>
+                                    <td>{{i+1}}</td>
+                                    <td>{{ appointmentreason.ap_reason_name }}</td>
+                                    <td>
+                                        <div>
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editappointmentModal"
+                                                (click)="openEditModal(appointmentreason)"
+                                                style="background-color: #2196F3; border-color: #2196F3; color: white;">
+                                                Edit
+                                            </button>
+
+                                            <button class="btn btn-danger btn-sm ms-2"
+                                                (click)="deleteAppointmentReason(appointmentreason?.ap_reasonid)">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-controls" style="text-align: right; margin-top: 10px;">
+                        <button (click)="onPageChange(page - 1)" [disabled]="page === 1" class="pagination-button">
+                            Previous
+                        </button>
+
+                        <button (click)="onPageChange(page + 1)" [disabled] class="pagination-button">
+                            Next
+                        </button>
+                    </div>
+
+                    <style>
+                        .pagination-button {
+                            padding: 5px 10px;
+                            font-size: 12px;
+                            background-color: #f1f1f1;
+                            color: #333;
+                            border: 1px solid #ddd;
+                            border-radius: 3px;
+                            cursor: pointer;
+                            margin-right: 5px;
+                            transition: border-color 0.3s, background-color 0.3s;
+                        }
+
+                        .pagination-button:hover {
+                            border-color: #007bff;
+                            background-color: #f9f9f9;
+                        }
+
+                        .pagination-button:disabled {
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                    </style>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Add Model -->
+<div bsModal #centerAppointmentModal="bs-modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" appointment="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Add Appointment Reason</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;"
+                    (click)="centerAppointmentModal?.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form [formGroup]="appointmentreasonForm" (ngSubmit)="onSubmit()">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicName" style="font-weight: bold; color: #333;">Clinic Name <span
+                                        style="color: red;">*</span></label>
+                                <select formControlName="apr_clinic" id="apr_clinic" class="form-select"
+                                    style="border-radius: 8px; padding: 10px;">
+                                    <option value="">Select Clinic</option>
+                                    <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">{{
+                                        clinic.clinicname }}</option>
+                                </select>
+                                <div *ngIf="submitted && f.apr_clinic.errors" class="text-danger">
+                                    Clinic Name is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="apresonname" style="font-weight: bold; color: #333;">Appointment Reason
+                                    Name<span style="color: red;">*</span></label>
+                                <input type="text" id="ap_reason_name" class="form-control"
+                                    formControlName="ap_reason_name" placeholder="Enter Appointment Reason Name"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.ap_reason_name.errors" class="text-danger">
+                                    Appointment Reason Name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="apresonshortname" style="font-weight: bold; color: #333;">Appointment Reason
+                                    Short
+                                    Name<span style="color: red;">*</span></label>
+                                <input type="text" id="ap_reason_shortname" class="form-control"
+                                    formControlName="ap_reason_shortname"
+                                    placeholder="Enter Appointment Reason Short Name"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.ap_reason_shortname.errors" class="text-danger">
+                                    Appointment Reason Short Name is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ap_reason_dignscolor" style="font-weight: bold; color: #333;">
+                                    Color<span style="color: red;">*</span>
+                                </label>
+                                <input type="color" id="ap_reason_dignscolor" class="form-control"
+                                    formControlName="ap_reason_dignscolor"
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 5px;" />
+                                <div *ngIf="submitted && f.ap_reason_dignscolor.errors" class="text-danger">
+                                    Color is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description" style="font-weight: bold; color: #333;">Appointment Reason
+                                    Description <span style="color: red;">*</span></label>
+                                <textarea id="ap_reason_desc" class="form-control" formControlName="ap_reason_desc"
+                                    placeholder="Enter Appointment Reason Description" rows="2"
+                                    style="border-radius: 8px; padding: 10px;">
+                                </textarea>
+                                <div *ngIf="submitted && f.ap_reason_desc.errors" class="text-danger">
+                                    Appointment Reason
+                                    Description is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            (click)="centerAppointmentModal?.hide()"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;"
+                            #closeButton>
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary"
+                            style="border-radius: 8px; color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Model -->
+<div class="modal fade" id="editappointmentModal" tabindex="-1" appointment="dialog"
+    aria-labelledby="editappointmentModal" aria-hidden="true">
+    <div class="modal-dialog" appointment="document" style="max-width: 800px; margin: 30px auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header"
+                style="border-bottom: 2px solid #f1f1f1; padding: 20px 30px; background-color: #222c5c; color: white; border-radius: 12px 12px 0 0;">
+                <h5 class="modal-title" style="font-size: 1.2rem;">Edit Appointment Reason</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    style="background: none; border: none; color: #fafbfc; font-size: 1.2rem;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form #editappointmentreasonForm="ngForm">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clinicName" style="font-weight: bold; color: #333;">Clinic Name <span
+                                        style="color: red;">*</span></label>
+                                <select class="form-select" [(ngModel)]="selectedAppointmentreason.apr_clinic"
+                                    style="border-radius: 8px; padding: 10px;" name="regionId" class="form-select">
+                                    <option disabled>Select Clinic</option>
+                                    <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">{{
+                                        clinic.clinicname }}</option>
+                                </select>
+                                <div *ngIf="submitted && f.apr_clinic.errors" class="text-danger">
+                                    Clinic Name is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="apresonname" style="font-weight: bold; color: #333;">Appointment Reason
+                                    Name<span style="color: red;">*</span></label>
+                                <input type="text" id="ap_reason_name"
+                                    [(ngModel)]="selectedAppointmentreason.ap_reason_name" name="ap_reason_name"
+                                    class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.ap_reason_name.errors" class="text-danger">
+                                    Appointment Reason Name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="apresonshortname" style="font-weight: bold; color: #333;">Appointment Reason
+                                    Short
+                                    Name<span style="color: red;">*</span></label>
+                                <input type="text" id="ap_reason_shortname"
+                                    [(ngModel)]="selectedAppointmentreason.ap_reason_shortname"
+                                    name="ap_reason_shortname" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.ap_reason_shortname.errors" class="text-danger">
+                                    Appointment Reason Short Name is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ap_reason_dignscolor" style="font-weight: bold; color: #333;">
+                                    Color<span style="color: red;">*</span>
+                                </label>
+                                <input type="color" id="ap_reason_dignscolor"
+                                    [(ngModel)]="selectedAppointmentreason.ap_reason_dignscolor"
+                                    name="ap_reason_dignscolor" class="form-control" required
+                                    style="border-radius: 8px; border: 1px solid #ccc; padding: 10px;" />
+                                <div *ngIf="submitted && f.ap_reason_dignscolor.errors" class="text-danger">
+                                    Color is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description" style="font-weight: bold; color: #333;">Appointment Reason
+                                    Description <span style="color: red;">*</span></label>
+                                <textarea id="ap_reason_desc" [(ngModel)]="selectedAppointmentreason.ap_reason_desc"
+                                    name="ap_reason_desc" class="form-control" required rows="2"
+                                    style="border-radius: 8px; padding: 10px;">
+                                </textarea>
+                                <div *ngIf="submitted && f.ap_reason_desc.errors" class="text-danger">
+                                    Appointment Reason
+                                    Description is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer" style="border-top: 2px solid #f1f1f1; padding: 10px 20px;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="closeEditModalButton"
+                            style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none;">
+                            Close
+                        </button>
+                        <button type="button" class="btn btn-primary" (click)="editAppointmentreason()"
+                            style="border-radius: 8px;  color: white; padding: 10px 20px; border: none;">
+                            Save
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

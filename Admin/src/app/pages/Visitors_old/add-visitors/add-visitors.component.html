@@ -1,0 +1,349 @@
+<div class="container-fluid">
+    <app-page-title title="Add New Visit" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h4 class="card-title mb-4" style="margin: 0;">Add New Visit</h4>
+                        <button type="button" [routerLink]="['/visit/list']" class="btn btn-primary"
+                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                            Visitors List
+                        </button>
+                    </div>
+
+                    <div *ngIf="isLoading" class="preloader-overlay">
+                        <div class="preloader-container">
+                            <img src="assets/loading-spinner.gif" alt="Loading..." class="preloader-image" />
+                            <p class="preloader-message">
+                                Fetching clinic and patient data, please wait...
+                            </p>
+                        </div>
+                    </div>
+
+                    <form [formGroup]="visitorsForm" (ngSubmit)="onSubmit()">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="mb-2">
+                                    <label for="clinicName">Clinic</label>
+                                    <span class="text-danger">*</span>
+                                    <select formControlName="visit_clinicid" (change)="getptn($event)"
+                                        id="visit_clinicid" class="form-select">
+                                        <option value="">Select Clinic</option>
+                                        <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">
+                                            {{ clinic.clinicname }}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f.visit_clinicid.errors" class="text-danger">
+                                        Clinic is required.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="mb-2">
+                                    <label for="masterpatientindex">Master Patient Index</label>
+                                    <span class="text-danger">*</span>
+                                    <!-- <input type="text" class="form-control" id="masterpatientindex"
+                                     formControlName="masterpatientindex" placeholder="Master Patient Index" (keyup)="getptndetails($event)" /> -->
+                                    <select formControlName="patient_id" id="patient_id"
+                                        (change)="getmpidetails($event)" class="form-select">
+                                        <option value="">Select Mpi</option>
+                                        <option *ngFor="let patient of mpinoList" [value]="patient.patientregid">
+                                            {{ patient.mpino }}
+                                        </option>
+                                    </select>
+
+
+                                    <div *ngIf="submitted && f.patient_id.errors" class="text-danger">
+                                        Master Patient Index is required.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="mb-2">
+                                    <label for="totalvisit">Total Visit</label><br>
+                                    <input type="text" disabled class="form-control" id="totalvisit"
+                                        formControlName="totalvisit" placeholder="Total Visit" />
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="mb-2">
+                                    <label for="hprs">HPRS</label>
+                                    <span class="text-danger">*</span>
+                                    <input type="text" class="form-control" id="hprs" formControlName="hprs"
+                                        placeholder="" disabled />
+
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-md-2">
+                                <div class="mb-2">
+                                    <label for="token">Token</label>
+                                    <span class="text-danger">*</span>
+                                    <input type="text" class="form-control" id="token" formControlName="token"
+                                        placeholder="Enter Token No" />
+                                    <div *ngIf="submitted && f.token.errors" class="text-danger">
+                                        Token Code is required.
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <div class="col-md-2">
+                                <div class="mb-2">
+                                    <label for="hdccat">Patient Category</label>
+                                    <span class="text-danger">*</span>
+                                    <input type="hidden" class="form-control" formControlName="appointmentid"
+                                        id="appointmentid">
+                                    <input type="hidden" class="form-control" formControlName="visit_time"
+                                        id="visit_time">
+                                    <input type="hidden" class="form-control" formControlName="vststart" id="vststart">
+                                    <input type="hidden" class="form-control" formControlName="vstend" id="vstend">
+
+                                    <select id="hdccat" class="form-select" formControlName="hdccat">
+                                        <option value="" disabled selected>Choose...</option>
+                                        <option value="PHC headcount under 5 years">
+                                            PHC headcount under 5 years </option>
+                                        <option value="PHC headcount 5-9 years">
+                                            PHC headcount 5-9 years </option>
+                                        <option value="PHC headcount 10-19 years">
+                                            PHC headcount 10-19 years </option>
+                                        <option value="PHC headcount 20 years and older">
+                                            PHC headcount 20 years and older </option>
+                                    </select>
+                                    <div *ngIf="submitted && f.hdccat.errors" class="text-danger">
+                                        Patient Category is required.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="mb-2">
+                                    <!-- <input type="hidden" class="form-control" formControlName="roomid" id="roomid" value="1"> -->
+
+                                    <label for="patientImage">Patient Image</label>
+                                    <span class="text-danger">*</span>
+
+
+                                    <!-- Image Preview -->
+                                    <div class="mt-2" *ngIf="imagePreview">
+                                        <img [src]="imagePreview" alt="Preview"
+                                            style="max-width: 100%; height: auto;" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <!-- Patient Details Card -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-fullname mt-4 mb-4">Patient Details</h4>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="fullname">Full Name</label>
+                                                    <span class="text-danger">*</span>
+                                                    <input type="text" class="form-control" id="fullname"
+                                                        formControlName="fullname" [value]="fullnames|| ''" disabled />
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <div class="mb-2">
+                                                    <label for="age">Age</label>
+                                                    <span class="text-danger">*</span>
+                                                    <input type="text" class="form-control" id="age"
+                                                        formControlName="age" readonly [value]="age || ''" placeholder="" />
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="pEmail">Email</label>
+                                                    <input type="email" class="form-control" id="pEmail"
+                                                        formControlName="pEmail" [value]="email|| ''" placeholder="@" disabled/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="pContactNo">Contact Number</label>
+                                                    <input type="text" class="form-control" id="pContactNo"
+                                                        formControlName="pContactNo" placeholder="Contact Number"
+                                                        [value]="contact|| ''" disabled/>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="address">Address</label>
+                                                    <textarea class="form-control" id="address"
+                                                        formControlName="address" placeholder="" rows="1"></textarea>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Stream Allocation Card -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title mt-4 mb-4">Stream Allocation</h4>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="mb-2">
+                                                    <label for="streams">Streams</label>
+                                                    <!-- <span class="text-danger">*</span> -->
+                                                    <select id="vststream_classifid" class="form-select"
+                                                        formControlName="vststream_classifid">
+                                                        <option value="" disabled selected>Choose...</option>
+                                                        <option *ngFor="let clsf of classificationList"
+                                                            [value]="clsf.id">
+                                                            {{ clsf.classification }}
+                                                        </option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-5">
+                                                <div class="mb-2">
+                                                    <label for="substreams">Sub Streams</label>
+                                                    <!-- <span class="text-danger">*</span> -->
+                                                    <select id="vststream_subclsfct_id" class="form-select"
+                                                        formControlName="vststream_subclsfct_id">
+                                                        <option value="" disabled selected>Choose...</option>
+                                                        <option value="HIV">HIV</option>
+                                                        <option value="TB">TB</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="mb-2">
+                                                    <label class="action">Actions</label><br>
+                                                    <button type="button" class="btn btn-primary">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="visittype">Visit Type</label>
+                                                    <!-- <span class="text-danger">*</span> -->
+                                                    <select id="visit_type" class="form-select"
+                                                        formControlName="visit_type">
+                                                        <option value="">Select</option>
+                                                        <option value="New Visit" selected>New
+                                                            Visit</option>
+                                                        <option value="Emergency Treatment">
+                                                            Emergency Treatment</option>
+                                                        <option value="Routine Out Patient">
+                                                            Routine Out Patient</option>
+                                                        <option value="Special Out Patient">
+                                                            Special Out Patient</option>
+                                                        <option value="Follow-up Visit">
+                                                            Follow-up Visit</option>
+                                                        <option value="Medication Collection">
+                                                            Medication Collection</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="mb-2">
+                                                    <label for="referred_by">Referred By</label>
+                                                    <!-- <span class="text-danger">*</span> -->
+                                                    <select id="referred_by" class="form-select"
+                                                        formControlName="referred_by">
+                                                        <option value="">Select</option>
+                                                        <option value="Self-Referral" selected>
+                                                            Self-Referral</option>
+                                                        <option value="Clinic">Clinic</option>
+                                                        <option value="Community health centre">
+                                                            Community health centre</option>
+                                                        <option value="Home based care">Home
+                                                            based care</option>
+                                                        <option value="Hospital">Hospital
+                                                        </option>
+                                                        <option value="Non-Government organisation">
+                                                            Non-Government organisation</option>
+                                                        <option value="Other">Other</option>
+                                                        <option value="EMTCT">EMTCT</option>
+                                                        <option value="Private Practitioner">
+                                                            Private Practitioner</option>
+
+                                                        <option value="Traditional health Practitioner">
+                                                            Traditional health Practitioner
+                                                        </option>
+                                                        <option value="VCT">VCT</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="status">Vital Location</label>
+                                                    <!-- <span class="text-danger">*</span> -->
+                                                    <select id="vitalstatus" class="form-select"
+                                                        formControlName="status">
+                                                        <option value="">Select</option>
+                                                        <option value="Vital Collection" selected>Vital Room</option>
+                                                        <option value="Consultation">
+                                                            Consultation</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- <div>
+                         <button type="submit" class="btn btn-primary w-md mt-4">Submit</button>
+                         <button type="button" class="btn btn-secondary w-md mt-4 ms-2">Reset</button>
+                     </div> -->
+
+                        <div>
+                            <button type="button" class="btn btn-secondary mt-4 "
+                                style="border-radius: 8px; background-color: #262f39; color: #f2f4f7; padding: 10px 20px; border: none; margin-right: 10px;">
+                                Reset
+                            </button>
+                            <button type="submit" class="btn btn-primary mt-4"
+                                style="border-radius: 8px;  color: white; padding: 10px 20px; border: none;">
+                                Save
+                            </button>
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

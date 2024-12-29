@@ -1,0 +1,48 @@
+
+
+
+
+<!-- <h3>{{ classificationData?.classifications?.classification}}</h3>  -->
+
+
+<div class="card">
+    <div class="card-body">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h4 class="card-title mb-4" style="margin: 0;">Classification View</h4>
+      </div>
+      <div class="row">
+        <!-- Patient Information Section -->
+        <div class="col-xl-3">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="fw-semibold">Classification Information</h5>
+  
+              <div class="table-responsive">
+                <table class="table">
+                  <tbody>
+                    <!-- Clinic Information -->
+                    <tr>
+                      <th scope="row">Clinic Name</th>
+                      <td>{{ classificationData?.classifications?. clinic_name }}</td>
+                    </tr>
+                
+                    <tr>
+                      <th scope="row">Classification</th>
+                      <td>{{  classificationData?.classifications?.classification }}</td>
+                    </tr>
+                   
+                   
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div><!--end col-->
+  
+      
+            
+      
+        </div><!--end col-->
+      </div><!--end row-->
+    </div>
+  

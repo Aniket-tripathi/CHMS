@@ -1,0 +1,143 @@
+<div id="pdf-content">
+  <div class="header">
+    <h3>Patient Demographic Form</h3>
+    <button (click)="generatePDF()">Download PDF</button>
+
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="column">
+        <label>Province:</label>
+        <div class="value"></div>
+      </div>
+      <div class="column">
+        <label>Clinic:</label>
+        <div class="value">{{ patientData?.patients?.clinicname }}</div>
+      </div>
+      <div class="column">
+        <label>Facility File Number:</label>
+        <div class="value">205076443</div>
+      </div>
+      <div class="column">
+        <label>Mpi No:</label>
+        <div class="value">{{ patientData?.patients?.mpino }}</div>
+      </div>
+      <div class="column">
+        <label>Patient Category:</label>
+        <div class="value">{{ patientData?.patients?.patient_category }}</div>
+      </div>
+      <div class="column">
+        <label>Stream:</label>
+        <div class="value">{{ patientData?.patients?.classification_name }}</div>
+      </div>
+    </div>
+    <!-- <div class="barcode">[Barcode Placeholder]</div> -->
+  </div>
+
+  <div class="container">
+    <div class="section-header">Patient Information</div>
+    <div class="row">
+      <div class="column">
+        <label>Name:</label>
+        <div class="value">{{ patientData?.patients?.title + patientData?.patients?.fullname }}</div>
+      </div>
+      <div class="column">
+        <label>Age:</label>
+        <div class="value">{{ patientData?.patients?.agep }}</div>
+      </div>
+      <div class="column">
+        <label>Date of Birth:</label>
+        <div class="value">{{ patientData?.patients?.dob }}</div>
+      </div>
+      <div class="column">
+        <label>Gender:</label>
+        <div class="value">{{ patientData?.patients?.gender }}</div>
+      </div>
+      <div class="column">
+        <label>Citizenship:</label>
+        <div class="value">{{ patientData?.patients?.citizenship }}</div>
+      </div>
+      <div class="column">
+        <label>Religion:</label>
+        <div class="religion">{{ patientData?.patients?.religion }}</div>
+      </div>
+      <div class="column">
+        <label>Language:</label>
+        <div class="Language">{{ patientData?.patients?.language }}</div>
+      </div>
+      <div class="column">
+        <label>Email:</label>
+        <div class="Email">{{ patientData?.patients?.patientemail }}</div>
+      </div>
+      <div class="column">
+        <label>Race:</label>
+        <div class="Race">{{ patientData?.patients?.race }}</div>
+      </div>
+      <div class="column">
+        <label>Mobile No:</label>
+        <div class="Mobile">{{ patientData?.patients?.patientpno }}</div>
+      </div>
+      <div class="column">
+        <label>Alternate No:</label>
+        <div class="Alternate">{{ patientData?.patients?.patientextra }}</div>
+      </div>
+      <div class="column">
+        <label>Hprs No:</label>
+        <div class="Hprs"></div>
+      </div>
+      <div class="column">
+        <label>Id/Passport No:</label>
+        <div class="idpasport">{{ patientData?.patients?.idnumber + patientData?.patients?.passportno }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="section-header">Patient Address</div>
+    <table>
+      <tr>
+        <th>Address</th>
+        <th>Region</th>
+        <th>Ward</th>
+      </tr>
+      <tr>
+        <td>{{ patientData?.patients?.bill_address }}</td>
+        <td>{{ patientData?.patients?.bill_region }}</td>
+        <td>{{ patientData?.patients?.bill_ward }}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="container">
+    <div class="section-header">Patient Employment</div>
+    <table>
+      <tr>
+        <th>Status</th>
+        <th>Employer</th>
+        <th>Contact</th>
+      </tr>
+      <tr>
+        <td>Unemployed</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="container">
+    <div class="section-header">Next of Kin</div>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Relationship</th>
+        <th>Contact</th>
+      </tr>
+      <tr>
+        <td>New FD</td>
+        <td>Friend</td>
+        <td>-</td>
+      </tr>
+    </table>
+  </div>
+</div>

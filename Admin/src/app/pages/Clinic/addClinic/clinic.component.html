@@ -1,0 +1,231 @@
+<div class="card">
+    <div class="card-body" *ngIf="role == 'superadmin'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 class="card-title mb-4" style="margin: 0;">Health Facility Registration</h4>
+            <button type="button" routerLink="/clinic/list" class="btn btn-primary"
+                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                Clinic List
+            </button>
+        </div>
+
+        <form [formGroup]="clinicForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="mb-3">
+                        <label for="clinicRegionId">Health Facility type</label>
+                        <select id="clinicType" class="form-control" formControlName="clinicType">
+                            <option value="" disabled selected>Choose...</option>
+                            <option value="Public Clinic">Public Clinic</option>
+                            <option value="Public Hospital">Public Hospital</option>
+                            <option value="Private Practice">Private Practice</option>
+                            <option value="Private Hospital">Private Hospital</option>
+                        </select>
+                        <div *ngIf="submitted && f.clinicType.errors" class="text-danger">
+                            This field is required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="clinicName">Facility Name</label>
+                        <input type="text" class="form-control" id="clinicname" formControlName="clinicname"
+                            placeholder="Clinic Name" />
+                        <div *ngIf="submitted && f.clinicname.errors" class="text-danger">
+                            Clinic Name is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="cliniccode">Facility Code</label>
+                        <input type="text" class="form-control" id="cliniccode" formControlName="cliniccode"
+                            placeholder="Clinic Code" />
+                        <div *ngIf="submitted && f.cliniccode.errors" class="text-danger">
+                            Clinic Code is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="clinicEmail">Email</label>
+                        <input type="email" class="form-control" id="clinicEmail" (input)="checkEmailAvailability()"
+                            formControlName="clinicEmail" placeholder="@" />
+                        <div *ngIf="emailConflictMessage" class="error-message text-danger">
+                            {{ emailConflictMessage }}
+                        </div>
+                        <div *ngIf="f.clinicEmail.errors?.['required'] && submitted" class="text-danger">
+                            Email is required.
+                        </div>
+                        <div *ngIf="clinicForm.get('clinicEmail').hasError('invalidEmail')" class="text-danger">
+                            Invalid email format.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="clinicContactNo">Contact Number</label>
+                        <input type="text" class="form-control" id="clinicContactNo" formControlName="clinicContactNo"
+                            maxlength="10" onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                            placeholder="e.g: 0123456789" />
+                        <div *ngIf="submitted && f.clinicContactNo.errors" class="text-danger">
+                            Valid contact number is required.
+                        </div>
+                        <div *ngIf="clinicForm.get('clinicContactNo')?.errors?.invalidPhoneNumber">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="clinicLogo">Logo<span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="clinicLogo" formControlName="clinicLogo"
+                            (change)="onFileSelected($event)" />
+                        <div *ngIf="submitted && f.clinicLogo.errors" class="text-danger">
+                            clinic Logo is required.
+                        </div>
+                    </div>
+                </div>
+                <!-- Conditionally show Region field -->
+                <div class="col-lg-3" *ngIf="isPublicFacility()">
+                    <div class="mb-3">
+                        <label for="clinicRegionId">Region<span class="text-danger">*</span></label>
+                        <select id="clinicRegionId" class="form-control" formControlName="clinicRegionId">
+                            <option value="" disabled selected>Choose...</option>
+                            <option value="Region 1">Region 1</option>
+                            <option value="Region 2">Region 2</option>
+                            <option value="Region 3">Region 3</option>
+                            <option value="Region 4">Region 4</option>
+                            <option value="Region 5">Region 5</option>
+                            <option value="Region 6">Region 6</option>
+                        </select>
+                        <div *ngIf="submitted && f.clinicRegionId.errors" class="text-danger">
+                            Region is required.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conditionally show Ward field -->
+                <div class="col-lg-3" *ngIf="isPublicFacility()">
+                    <div class="mb-3">
+                        <label for="ClinicWardId">Ward<span class="text-danger">*</span></label>
+                        <select id="ClinicWardId" class="form-control" formControlName="ClinicWardId">
+                            <option value="" disabled selected>Choose...</option>
+                            <option value="Ward 1">Ward 1</option>
+                            <option value="Ward 2">Ward 2</option>
+                            <option value="Ward 3">Ward 3</option>
+                            <option value="Ward 4">Ward 4</option>
+                            <option value="Ward 5">Ward 5</option>
+                        </select>
+                        <div *ngIf="submitted && f.ClinicWardId.errors" class="text-danger">
+                            Ward is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label for="services">Services</label>
+                        <input type="text" class="form-control" id="services" formControlName="services"
+                            placeholder="Services" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="clinicAddress">Clinic Address</label>
+                        <textarea class="form-control" id="clinicAddress" formControlName="clinicAddress"
+                            placeholder="Address"></textarea>
+                        <div *ngIf="submitted && f.clinicAddress.errors" class="text-danger">
+                            Clinic Address is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="comments">Comments</label>
+                        <textarea class="form-control" id="comments" formControlName="comments"
+                            placeholder="comments"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary w-md">Submit</button>
+            </div>
+        </form>
+
+        <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+            {{ errorMessage }}
+        </div>
+
+    </div>
+    <div class="card-body" *ngIf="role !== 'superadmin'">
+        <div
+            style="padding: 20px; margin: 20px 0; border-radius: 5px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-left: 5px solid #f44336; font-family: Arial, sans-serif; font-size: 16px;">
+            <strong>Security Notice:</strong> As a staff member, you do not have the necessary permissions to add new
+            clinics. This action is restricted to Super Admins for security and privacy reasons.
+        </div>
+    </div>
+</div>
+<div *ngIf="loading" class="spinner-overlay">
+    <div class="spinner-container">
+        <div class="spinner"></div>
+        <div class="loading-message">
+            <span>Almost there, Sending Email...</span>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .spinner-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .spinner-container {
+        display: flex;
+        align-items: center;
+        /* Align spinner and text vertically in the center */
+    }
+
+    .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+        /* Space between the spinner and text */
+    }
+
+    .loading-message {
+        font-size: 16px;
+        color: #3498db;
+        font-weight: bold;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>

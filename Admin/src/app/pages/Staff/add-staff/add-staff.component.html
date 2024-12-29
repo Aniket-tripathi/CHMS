@@ -1,0 +1,410 @@
+<div class="card">
+  <div class="card-body" *ngIf="types !== 'cstaff'">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h4 class="card-title mb-4" style="margin: 0;">Add Staff</h4>
+    </div>
+
+    <form [formGroup]="staffForm" (ngSubmit)="onSave()">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="staffname">Staff Name<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="fname" formControlName="fname" placeholder="Enter staff name">
+            <div *ngIf="submitted && f.fname.errors" class="text-danger">
+              Staff Name Address is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="stafflastname">Staff Last Name<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="lname" formControlName="lname" placeholder="Enter last name">
+            <div *ngIf="submitted && f.lname.errors" class="text-danger">
+              Last Name Address is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="email">Staff Email<span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter email"
+              (input)="checkEmailAvailabilitystaff()">
+            <div *ngIf="emailConflictMessage" class="error-message text-danger">
+              {{ emailConflictMessage }}
+            </div>
+            <div *ngIf="submitted && f.email.errors" class="text-danger">
+              Email is required.
+            </div>
+            <div *ngIf="staffForm.get('email').hasError('invalidEmail')" class="text-danger">
+              Invalid email format.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="contact">Staff Contact No<span class="text-danger">*</span><span class="text-success">(Begin
+                with
+                zero)</span></label>
+            <input type="tel" class="form-control" maxlength="10"
+              onkeypress="return event.charCode >= 48 && event.charCode <= 57" id="contactno"
+              formControlName="contactno" placeholder="e.g: 0123456789">
+            <div *ngIf="submitted && f.contactno.errors" class="text-danger">
+              Contact No is required.
+            </div>
+            <div *ngIf="staffForm.get('contactno')?.errors?.invalidPhoneNumber">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="username">Staff Username<span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="username" formControlName="username"
+              placeholder="Enter username">
+            <div *ngIf="submitted && f.username.errors" class="text-danger">
+              Username is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="password">Staff Password<span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="password" formControlName="password"
+              placeholder="Enter password">
+            <div *ngIf="submitted && f.password.errors" class="text-danger">
+              password is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="contact">Gender<span class="text-danger">*</span></label>
+            <select id="gender" formControlName="gender" id="gender" class="form-control">
+              <option value="" selected>Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+            <div *ngIf="submitted && f.gender.errors" class="text-danger">
+              gender is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="contact">Date of Birth<span class="text-danger">*</span></label>
+            <input type="date" formControlName="dob" id="dob" class="form-control">
+            <div *ngIf="submitted && f.dob.errors" class="text-danger">
+              Date of Birth is required.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label>Clinic</label><span class="text-danger">*</span><br>
+            <select formControlName="clinicId" id="clinicId" class="form-control" [disabled]="clinicData.length === 1">
+              <option value="">Select Clinic</option>
+              <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">{{ clinic.clinicname }}</option>
+            </select>
+            <div *ngIf="submitted && f.clinicId.errors" class="text-danger">
+              Clinic is required.
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="col-md-3">
+          <div class="mb-3">
+            <label>Clinic</label><span class="text-danger">*</span><br>
+            <select formControlName="clinicId" id="clinicId" class="form-control">
+              <option disabled>Select Clinic</option>
+              <option *ngFor="let clinic of clinicData" [value]="clinic.clinicid">{{ clinic.clinicname }}</option>
+            </select>
+            <div *ngIf="submitted && f.clinicId.errors" class="text-danger">
+              Clinic is required Required.
+            </div>
+          </div>
+        </div> -->
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label>Department</label><br>
+            <select id="deptId" formControlName="deptId" class="form-control">
+              <option disabled>Select</option>
+              <option *ngFor="let department of departmentData" [value]="department.id">{{ department.deptname}}
+              </option>
+            </select>
+
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label>Designation</label><br>
+            <select id="desgid" formControlName="desgid" class="form-control">
+              <option disabled>Select</option>
+              <option *ngFor="let designations of designationData" [value]="designations.id">{{
+                designations.designation}}
+            </select>
+
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label>Role<span class="text-danger">*</span></label><br>
+            <select id="roleid" formControlName="roleid" class="form-control">
+              <option disabled>Select</option>
+              <option *ngFor="let roles of rolesData" [value]="roles.roleid">{{ roles.rolename}}
+            </select>
+            <div *ngIf="submitted && f.roleid.errors" class="text-danger">
+              Role is required.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label>Marital Status</label><br>
+            <select id="maritalstatus" formControlName="maritalstatus" class="form-control">
+              <option value="">Select</option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Separated">Separated</option>
+              <option value="Widowed">Widowed</option>
+              <option value="Not Specified">Not Specified</option>
+            </select>
+
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label>Employment Status</label><br>
+            <select id="employmentStatus" formControlName="employmentStatus" class="form-control">
+              <option value="">Select</option>
+              <option value="Permanent">Permanent</option>
+              <option value="Intern">Intern</option>
+              <option value="Extended public works ">Extended public works </option>
+              <option value="Community service">Community service</option>
+              <option value="Contract">Contract</option>
+              <option value="Temporary">Seconded DoH Staff</option>
+            </select>
+
+          </div>
+        </div>
+        <!-- <div class="col-md-3">
+          <label>Persal Number</label><span style="color:red;">*</span>
+          <div class="input-group mb-3">
+            <input type="text" name="staffdoj" id="staffdoj"
+              onkeypress="return event.charCode >= 48 &amp;amp; event.charCode <= 57" maxlength="10"
+              placeholder="Persal Number" class="form-control" ="">
+          </div>
+        </div> -->
+        <div class="col-md-3">
+          <div class="form-group fill">
+            <label>Staff Qualification</label>
+            <input type="text" formControlName="qualification" id="qualification" placeholder="Staff Qualification"
+              class="form-control">
+
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="sancno">SANC Number</label>
+            <input type="text" class="form-control" id="sancno" formControlName="sancno"
+              placeholder="Enter SANC Number">
+            <div *ngIf="submitted && f.sancno.errors" class="text-danger">
+              sanc no is Required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password and Contact -->
+
+
+      <!-- Role, Department, and Designation -->
+      <div class="row">
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="hpcsano">HPCSA Number</label>
+            <input type="text" class="form-control" id="hpcsano" formControlName="hpcsano"
+              placeholder="Enter HPCSA Number">
+            <div *ngIf="submitted && f.hpcsano.errors" class="text-danger">
+              hpcsano is Required.
+            </div>
+          </div>
+        </div>
+        <!-- <div class="col-md-3">
+          <div class="mb-3">
+            <label for="hpcsano"> SAPC Number</label>
+            <input type="text" class="form-control" id="sapno" formControlName="sapno" placeholder="Enter SAPC Number">
+            <div *ngIf="submitted && f.sapno.errors" class="text-danger">
+              SAPC Number is .
+            </div>
+          </div>
+        </div> -->
+
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="stafflevel">Staff Level</label>
+            <select id="level" formControlName="level" class="form-control">
+              <option value="" disabled>Select</option>
+              <option value="1">Emergency</option>
+
+            </select>
+            <div *ngIf="submitted && f.level.errors" class="text-danger">
+              level is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="province">Province</label>
+            <select id="province" formControlName="province" formControlName="province" class="form-control">
+              <option disabled selected>Select province</option>
+              <option *ngFor="let province of provinceData" [value]="province.provinceId">{{ province.provinceName}}
+            </select>
+            <div *ngIf="submitted && f.province.errors" class="text-danger">
+              province is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="district">District</label>
+            <select id="district" formControlName="district" class="form-control">
+              <option disabled selected>Select district</option>
+              <option *ngFor="let district of districtData" [value]="district.districtId">{{ district.districtName}}
+            </select>
+            <div *ngIf="submitted && f.district.errors" class="text-danger">
+              district is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location Details -->
+      <div class="row">
+
+
+        <div class="col-md-3">
+          <div class="mb-3">
+            <label for="subdistrict">Sub District</label>
+            <select id="subdistrict" formControlName="subdistrict" class="form-control">
+              <option disabled selected>Select sub-district</option>
+              <option value="1">Sub District 1</option>
+              <option value="2">Sub District 2</option>
+              <!-- Add other sub-districts -->
+            </select>
+            <div *ngIf="submitted && f.subdistrict.errors" class="text-danger">
+              sub district is required.
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-6">
+            <label for="address">Address<span class="text-danger">*</span></label>
+            <textarea id="address" formControlName="address" class="form-control" rows="3"
+              placeholder="Enter address"></textarea>
+            <div *ngIf="submitted && f.address.errors" class="text-danger">
+              address is required.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Uploads and Other Details -->
+      <!-- <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="signature">Signature</label>
+            <input type="file" class="form-control" formControlName="signature" id="signature">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="photo">Live Picture</label>
+            <input type="file" class="form-control" formControlName="photo" id="photo">
+          </div>
+        </div>
+      </div> -->
+
+
+      <!-- Submit Button -->
+      <div>
+        <!-- <button type="reset" class="btn btn-secondary me-3">Reset</button> -->
+        <button type="submit" class="btn btn-primary w-md">Submit</button>
+      </div>
+    </form>
+
+    <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+  </div>
+  <div class="card-body" *ngIf="types == 'cstaff'">
+    <div
+      style="padding: 20px; margin: 20px 0; border-radius: 5px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-left: 5px solid #f44336; font-family: Arial, sans-serif; font-size: 16px;">
+      <strong>Security Notice!</strong> As a staff member, you do not have the necessary permissions to add Staff
+      . This action is restricted to Clinic Admin And Super Admin for security and privacy reasons.
+    </div>
+  </div>
+</div>
+<div *ngIf="loading" class="spinner-overlay">
+  <div class="spinner-container">
+    <div class="spinner"></div>
+    <div class="loading-message">
+      <span>please hold on, Sending Email...</span>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  .spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .spinner-container {
+    display: flex;
+    align-items: center;
+    /* Align spinner and text vertically in the center */
+  }
+
+  .spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+    /* Space between the spinner and text */
+  }
+
+  .loading-message {
+    font-size: 16px;
+    color: #3498db;
+    font-weight: bold;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>

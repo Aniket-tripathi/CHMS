@@ -1,0 +1,84 @@
+<h4>Clinic</h4>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Loop through clinicsData array -->
+        <ng-container *ngIf="checkrole === 'superadmin'">
+            <div *ngFor="let clinic of clinicsData" class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card-body text-center p-4 border rounded shadow-sm"
+                    (click)="clinic.counter_count > 0 ? navigateToClinic(clinic.clinicid) : showAlert()">
+
+                    <!-- Avatar with clinic logo -->
+                    <div class="avatar-sm mx-auto mb-3">
+                        <span *ngIf="clinic.clinicLogo; else defaultLogo"
+                            class="avatar-title rounded-circle bg-primary text-white font-size-20 d-flex align-items-center justify-content-center"
+                            style="width: 60px; height: 60px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            {{ clinic.clinicname ? clinic.clinicname.charAt(0).toUpperCase() : '?' }}
+                        </span>
+                        <ng-template #defaultLogo>
+                            <span
+                                class="avatar-title rounded-circle bg-primary text-white font-size-20 d-flex align-items-center justify-content-center"
+                                style="width: 60px; height: 60px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                {{ clinic.clinicname ? clinic.clinicname.charAt(0).toUpperCase() : '?' }}
+                            </span>
+                        </ng-template>
+                    </div>
+
+                    <!-- Clinic Name and other details -->
+                    <h5 class="font-size-16 mb-2">
+                        <a class="text-dark font-weight-bold">{{ clinic.clinicname }}</a>
+                    </h5>
+
+                    <!-- Clinic Plan -->
+                    <span class="badge bg-primary">{{ clinic.clinicplan }}</span>&nbsp;<br>
+                    <span class="animated-message" [ngClass]="{
+                        'counter-zero': clinic.counter_count === 0, 
+                        'counter-available': clinic.counter_count > 0
+                    }">
+                        {{ clinic.counter_count === 0 ? 'No Counter Available' : clinic.counter_count + ' Counter
+                        Available'
+                        }}
+                    </span>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="checkrole != 'superadmin'">
+            <div *ngFor="let clinic of clinicsData" class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card-body text-center p-4 border rounded shadow-sm"
+                    (click)="clinic.counter_count > 0 ? navigateToClinic(clinic.clinicid) : showAlert()">
+
+                    <!-- Avatar with clinic logo -->
+                    <div class="avatar-sm mx-auto mb-3">
+                        <span *ngIf="clinic.clinicLogo; else defaultLogo"
+                            class="avatar-title rounded-circle bg-primary text-white font-size-20 d-flex align-items-center justify-content-center"
+                            style="width: 60px; height: 60px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            {{ clinic.clinicname ? clinic.clinicname.charAt(0).toUpperCase() : '?' }}
+                        </span>
+                        <ng-template #defaultLogo>
+                            <span
+                                class="avatar-title rounded-circle bg-primary text-white font-size-20 d-flex align-items-center justify-content-center"
+                                style="width: 60px; height: 60px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                {{ clinic.clinicname ? clinic.clinicname.charAt(0).toUpperCase() : '?' }}
+                            </span>
+                        </ng-template>
+                    </div>
+
+                    <!-- Clinic Name and other details -->
+                    <h5 class="font-size-16 mb-2">
+                        <a class="text-dark font-weight-bold">{{ clinic.clinicname }}</a>
+                    </h5>
+
+                    <!-- Clinic Plan -->
+                    <span class="badge bg-primary">{{ clinic.clinicplan }}</span>&nbsp;<br>
+                    <span class="animated-message" [ngClass]="{
+                        'counter-zero': clinic.counter_count === 0, 
+                        'counter-available': clinic.counter_count > 0
+                    }">
+                        {{ clinic.counter_count === 0 ? 'No Counter Available' : clinic.counter_count + ' Counter
+                        Available'
+                        }}
+                    </span>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
